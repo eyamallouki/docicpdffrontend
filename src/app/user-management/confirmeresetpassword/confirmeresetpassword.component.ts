@@ -41,19 +41,20 @@ export class ConfirmeresetpasswordComponent implements OnInit {
 
   confirmResetPassword() {
     if (this.confirmPasswordForm.valid && this.uidb64 && this.token) {
-        const newPassword = this.confirmPasswordForm.value.newPassword;
-        this.resetPasswordService.confirmResetPassword(newPassword, this.uidb64, this.token).subscribe(
-            response => {
-                console.log('Réponse du service reçue :', response);
-                this.message = response.msg; 
-
-            },
-            error => {
-                console.error('Une erreur s\'est produite lors de la confirmation du mot de passe :', error);
-                this.message = 'An error occurred. Please try again later.';
-            }
-        );
+      const newPassword = this.confirmPasswordForm.value.newPassword;
+      this.resetPasswordService.confirmResetPassword(newPassword, this.uidb64, this.token).subscribe(
+        response => {
+          console.log('Réponse du service reçue :', response);
+          this.message = response.msg;
+          setTimeout(() => {
+            this.router.navigate(['/']);
+          }, 2000);
+        },
+        error => {
+          console.error('Une erreur s\'est produite lors de la confirmation du mot de passe :', error);
+          this.message = 'Une erreur s\'est produite. Veuillez réessayer ultérieurement.';
+        }
+      );
     }
-}
-
+  }
 }

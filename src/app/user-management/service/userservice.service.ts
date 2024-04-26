@@ -25,13 +25,14 @@ export class UserserviceService {
     return this.http.post<any>(`${this.apiUrl}/login/`, credentials);
   }
 
-  sendResetPasswordRequest(email: string) {
+  sendResetPasswordRequest(email: string): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}/password-reset/`, { email });
   }
+
   confirmResetPassword(newPassword: string, uidb64: string, token: string): Observable<any> {
     const body = {
-      newPassword: newPassword,
-      confirmPassword: newPassword
+      new_password: newPassword,
+      new_password2: newPassword
     };
     const url = `${this.apiUrl}/password-reset-confirm/${uidb64}/${token}/`;
     console.log('API URL:', url);

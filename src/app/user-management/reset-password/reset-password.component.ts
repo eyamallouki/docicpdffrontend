@@ -27,9 +27,12 @@ export class ResetPasswordComponent implements OnInit {
           this.message = response.message;
         },
         error => {
-          console.log(error);
+          console.error('An error occurred:', error);
+          this.message = 'An error occurred. Please try again later.';
         }
       );
+    } else {
+      this.message = 'Please enter a valid email.';
     }
   }
 }
