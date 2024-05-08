@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { User } from 'src/app/model/usermodel';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Observable, catchError, throwError } from 'rxjs';
+import { Role, User } from 'src/app/model/usermodel';
 
 @Injectable({
   providedIn: 'root'
@@ -64,12 +64,41 @@ export class UserserviceService {
 
   isUserPatient(): boolean {
     const userRole = this.getUserRole();
-    return userRole === 'patient';
+    return userRole === Role.PATIENT;
   }
-
+  
   isUserAdmin(): boolean {
     const userRole = this.getUserRole();
-    return userRole === 'admin';
+    return userRole === Role.ADMINISTRATEUR;
+  } 
+  
+
+   getRole(): Observable<Role> {
+    const token = localStorage.getItem('jwt_token');
+    if (token) {
+      const headers = new HttpHeaders({
+        'Authorization': `Bearer ${token}`
+      });
+      return this.http.get<Role>(`${this.apiUrl}/get-user-role/`, { headers }).pipe(
+        catchError((error) => {
+          // Gérer les erreurs ici, par exemple les erreurs 401
+          return throwError(error);
+        })
+      );
+    } else {
+      // Gérer le cas où aucun token n'est disponible, par exemple, rediriger vers la page de connexion
+      return throwError('No token available');
+    }
+  } 
+
+setUserRole(role: string) {
+  if (role) { // Check if the role is defined
+    const upperCaseRole = role.toUpperCase(); // Convert to uppercase if defined
+    console.log('Setting user role:', upperCaseRole);
+    localStorage.setItem(this.userRoleKey, upperCaseRole);
+  } else {
+    console.error('User role is undefined.');
   }
+}   
 
 }

@@ -4,6 +4,7 @@ import { UserserviceService } from '../service/userservice.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NotificationService } from '../service/notification-service.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Role } from 'src/app/model/usermodel';
 
 
 @Component({
@@ -74,32 +75,49 @@ export class RegisterComponent implements OnInit {
         this.userService.verifyEmail(token).subscribe(
           (response) => {
             console.log('Email verification successful:', response);
-            // Rediriger l'utilisateur ou afficher un message de confirmation
+
           },
           (error) => {
             console.error('Email verification failed:', error);
-            // Gérer les erreurs de vérification de l'e-mail ici
           }
         );
       }
     });
   }
 
-  login(): void {
-    if (this.loginForm.valid) {
-      const credentials = this.loginForm.value;
-      this.userService.login(credentials).subscribe(
-        (response) => {
-          console.log('User logged in successfully:', response);
-          this.userService.storeToken(response.token); // Stocke le token JWT
-        },
-        (error) => {
-          console.error('Login failed:', error);
-          this.errorMessage = 'Login failed. Please check your email and password.';
+ // RegisterComponent.ts
+
+login(): void {
+  if (this.loginForm.valid) {
+    const credentials = this.loginForm.value;
+    this.userService.login(credentials).subscribe(
+      (response) => {
+        console.log('User logged in successfully:', response);
+        this.userService.storeToken(response.token); 
+        this.userService.setUserRole(response.role); 
+
+
+        const role = response.role;
+        switch (role) {
+          case Role.ADMINISTRATEUR:
+            this.router.navigate(['/admin-dashboard']); 
+            break;
+          case Role.PATIENT:
+            this.router.navigate(['/patient-dashboard']); 
+            break;
+          default:
+            this.router.navigate(['/']); 
         }
-      );
-    }
+      },
+      (error) => {
+        console.error('Login failed:', error);
+      }
+    );
   }
+}
+
+  
+  
 
   loadScript(scriptUrl: string) {
     const body = <HTMLDivElement> document.body;
