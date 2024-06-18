@@ -1,0 +1,83 @@
+<div class="container">
+  <ul class="responsive-table">
+    <div *ngIf="data.fileType === 'PDF'">
+      <h2 class="pdf-header">PDF Files</h2>
+      <li *ngIf="pdfFiles.length > 0" class="table-header pdf-header">
+        <div class="col col-1">Title</div>
+        <div class="col col-2">Total Pages</div>
+        <div class="col col-3">Category</div>
+        <div class="col col-4">Status</div>
+        <div class="col col-5">File</div>
+      </li>
+      <li *ngFor="let file of pdfFiles" class="table-row pdf-row">
+        <div class="col col-1" data-label="Title">{{ file.titre }}</div>
+        <div class="col col-2" data-label="Total Pages">{{ file.total_pages }}</div>
+        <div class="col col-3" data-label="Category">{{ file.categorie }}</div>
+        <div class="col col-4" data-label="Status">{{ file.etat }}</div>
+        <div class="col col-5" data-label="File">
+          <a [href]="sanitizeFileUrl(file.file)" target="_blank">{{ file.file }}</a>
+        </div>
+      </li>
+    </div>
+
+    <div *ngIf="data.fileType === 'TXT'">
+      <h2 class="txt-header">TXT Files</h2>
+      <li *ngIf="txtFiles.length > 0" class="table-header txt-header">
+        <div class="col col-1">Title</div>
+        <div class="col col-2">Total Pages</div>
+        <div class="col col-3">Category</div>
+        <div class="col col-4">Status</div>
+        <div class="col col-5">File</div>
+      </li>
+      <li *ngFor="let file of txtFiles" class="table-row txt-row">
+        <div class="col col-1" data-label="Title">{{ file.titre }}</div>
+        <div class="col col-2" data-label="Total Pages">{{ file.total_pages }}</div>
+        <div class="col col-3" data-label="Category">{{ file.categorie }}</div>
+        <div class="col col-4" data-label="Status">{{ file.etat }}</div>
+        <div class="col col-5" data-label="File">
+          <a [href]="sanitizeFileUrl(file.file)" target="_blank">{{ file.file }}</a>
+        </div>
+      </li>
+    </div>
+
+    <div *ngIf="data.fileType === 'JPG'">
+      <h2 class="jpg-header">JPG Images</h2>
+      <li *ngIf="jpgFiles.length > 0" class="table-header jpg-header">
+        <div class="col col-1">Title</div>
+        <div class="col col-2">Total Pages</div>
+        <div class="col col-3">Category</div>
+        <div class="col col-4">Status</div>
+        <div class="col col-5">File</div>
+      </li>
+      <li *ngFor="let file of jpgFiles" class="table-row jpg-row">
+        <div class="col col-1" data-label="Title">{{ file.titre }}</div>
+        <div class="col col-2" data-label="Total Pages">{{ file.total_pages }}</div>
+        <div class="col col-3" data-label="Category">{{ file.categorie }}</div>
+        <div class="col col-4" data-label="Status">{{ file.etat }}</div>
+        <div class="col col-5" data-label="File">
+          <a [href]="sanitizeFileUrl(file.file)" target="_blank">{{ file.file }}</a>
+        </div>
+      </li>
+    </div>
+
+    <div *ngIf="data.fileType === 'PNG'">
+      <h2 class="png-header">PNG Images</h2>
+      <li *ngIf="pngFiles.length > 0" class="table-header png-header">
+        <div class="col col-1">Title</div>
+        <div class="col col-2">Total Pages</div>
+        <div class="col col-3">Category</div>
+        <div class="col col-4">Status</div>
+        <div class="col col-5">File</div>
+      </li>
+      <li *ngFor="let file of pngFiles" class="table-row png-row">
+        <div class="col col-1" data-label="Title">{{ file.titre }}</div>
+        <div class="col col-2" data-label="Total Pages">{{ file.total_pages }}</div>
+        <div class="col col-3" data-label="Category">{{ file.categorie }}</div>
+        <div class="col col-4" data-label="Status">{{ file.etat }}</div>
+        <div class="col col-5" data-label="File">
+          <a [href]="sanitizeFileUrl(file.file)" target="_blank">{{ file.file }}</a>
+        </div>
+      </li>
+    </div>
+  </ul>
+</div>

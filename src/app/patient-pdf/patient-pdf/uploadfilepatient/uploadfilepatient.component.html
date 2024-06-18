@@ -1,0 +1,102 @@
+<head>
+  <link href="https://fonts.googleapis.com/css2?family=Lato&display=swap" rel="stylesheet">
+  <link href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Lato&display=swap" rel="stylesheet">
+  <link href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+  <link href="https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css" rel="stylesheet" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
+</head>
+
+      <body>
+  
+        <section class="home-section relative flex items-center justify-center">
+          <app-side-bar></app-side-bar>
+          <div class="background-image"></div>
+          <div class="sm:max-w-lg w-full p-10 bg-white rounded-xl z-10">
+            <div class="text-center">
+              <h2 class="mt-5 text-3xl font-bold text-gray-900">File Upload!</h2>
+              <br>
+              <br>
+              <div class="h-full w-full flex items-center justify-center">
+                <img class="has-mask h-36 object-center"
+                     src="https://img.freepik.com/free-vector/image-upload-concept-landing-page_52683-27130.jpg?size=338&ext=jpg"
+                     alt="freepik image">
+              </div>
+            </div>
+            <br>
+            <br>
+            <form class="mt-8 space-y-3" (ngSubmit)="onUpload()" #uploadForm="ngForm">
+              <div class="grid grid-cols-1 space-y-2">
+                <label class="text-sm font-bold text-gray-500 tracking-wide">Title</label>
+                <input class="text-base p-2 border border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500"
+                       type="text" placeholder="Title" [(ngModel)]="pdfTitle" name="pdfTitle" required>
+              </div>
+              <div class="grid grid-cols-1 space-y-2">
+                <label class="text-sm font-bold text-gray-500 tracking-wide">Total Pages</label>
+                <input class="text-base p-2 border border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500"
+                       type="number" placeholder="Total Pages" [(ngModel)]="totalPages" name="totalPages" required>
+              </div>
+              <div class="grid grid-cols-1 space-y-2">
+                <label class="text-sm font-bold text-gray-500 tracking-wide">Category</label>
+                <input class="text-base p-2 border border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500"
+                       type="text" placeholder="Category" [(ngModel)]="categorie" name="categorie" required>
+              </div>
+              <div class="grid grid-cols-1 space-y-2">
+                <label class="text-sm font-bold text-gray-500 tracking-wide">Attach Document</label>
+                <ngx-file-drop (onFileDrop)="onFileDropped($event)" [multiple]="true">
+                  <div class="flex items-center justify-center w-full">
+                    <label class="flex flex-col rounded-lg border-4 border-dashed w-full h-60 p-10 group text-center">
+                      <div class="h-full w-full text-center flex flex-col items-center justify-center">
+                        <img class="has-mask h-36 object-center"
+                             src="https://img.freepik.com/free-vector/image-upload-concept-landing-page_52683-27130.jpg?size=338&ext=jpg"
+                             alt="freepik image">
+                        <p class="pointer-none text-gray-500"><span class="text-sm">Drag and drop</span> files here <br/> or <a href="javascript:void(0)" class="text-blue-600 hover:underline" (click)="fileInput.click()">select a file</a> from your computer</p>
+                      </div>
+                      <input #fileInput type="file" class="hidden" (change)="onFileSelected($event)" multiple>
+                    </label>
+                  </div>
+                </ngx-file-drop>
+              </div>
+              <div class="grid grid-cols-1 space-y-2">
+                <label class="text-sm font-bold text-gray-500 tracking-wide">File Previews:</label>
+                <div *ngFor="let preview of filePreviews">
+                  <iframe [src]="preview" class="w-full h-60" frameborder="0"></iframe>
+                </div>
+              </div>
+              <p class="text-sm text-gray-300">
+                <span>File type: doc, pdf, types of images</span>
+              </p>
+              <div>
+                <button type="submit" class="my-5 w-full flex justify-center bg-blue-500 text-gray-100 p-4 rounded-full tracking-wide
+                                           font-semibold focus:outline-none focus:shadow-outline hover:bg-blue-600 shadow-lg cursor-pointer transition ease-in duration-300">
+                  Upload
+                </button>
+              </div>
+            </form>
+          </div>
+        </section>
+        
+        <script>
+          let sidebar = document.querySelector(".sidebar");
+          let closeBtn = document.querySelector("#btn");
+        
+          closeBtn.addEventListener("click", ()=>{
+              sidebar.classList.toggle("open");
+              menuBtnChange();
+          });
+        
+          function menuBtnChange() {
+              if(sidebar.classList.contains("open")){
+                  closeBtn.classList.replace("bx-menu", "bx-menu-alt-right");
+              } else {
+                  closeBtn.classList.replace("bx-menu-alt-right","bx-menu");
+              }
+          }
+        </script>
+        
+      </body>
+
+    

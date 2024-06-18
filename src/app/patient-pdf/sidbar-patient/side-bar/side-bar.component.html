@@ -1,0 +1,67 @@
+<head>
+    <link href="https://fonts.googleapis.com/css2?family=Lato&display=swap" rel="stylesheet">
+    <link href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Lato&display=swap" rel="stylesheet">
+    <link href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link href="https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css" rel="stylesheet" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+      .has-mask {
+          position: absolute;
+          clip: rect(10px, 150px, 130px, 10px);
+      }
+  </style>
+  </head>
+        <body>
+      
+            <div class="sidebar">
+                <div class="logo-details">
+                  <i class="bx bxl-c-plus-plus icon"></i>
+                  <div class="logo_name">CodingLab</div>
+                  <i class="bx bx-menu" id="btn"></i>
+                </div>
+                <ul class="nav-list">
+                  <li>
+                    <a routerLink="/patient-dashboard" id="home-link">
+                      <i class="bx bx-grid-alt"></i>
+                      <span class="links_name">Home</span>
+                    </a>
+                    <span class="tooltip">Home</span>
+                  </li>
+                  <li>
+                    <a routerLink="/profilepatient">
+                      <i class="bx bx-user"></i>
+                      <span class="links_name">Profile</span>
+                    </a>
+                    <span class="tooltip">Profile</span>
+                  </li>
+                  <li>
+                    <a routerLink="/listpdf">
+                      <i class="bx bx-pie-chart-alt-2"></i>
+                      <span class="links_name">Files</span>
+                    </a>
+                    <span class="tooltip">Files</span>
+                  </li>
+                  <li>
+                    <a routerLink="/upload">
+                      <i class="bx bx-folder"></i>
+                      <span class="links_name">Upload file</span>
+                    </a>
+                    <span class="tooltip">Upload file</span>
+                  </li>
+                  <li>
+                    <a routerLink="/settings">
+                      <i class="bx bx-cog"></i>
+                      <span class="links_name">Setting</span>
+                    </a>
+                    <span class="tooltip">Setting</span>
+                  </li>
+                  <a routerLink="/">
+                  <i class="bx bx-log-out" id="log_out"></i>
+                </a>
+                </ul>
+              </div>
+              

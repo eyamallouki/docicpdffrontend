@@ -6,14 +6,12 @@ import { NotificationService } from '../service/notification-service.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Role } from 'src/app/model/usermodel';
 
-
 @Component({
   selector: 'app-register',
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.css']
 })
 export class RegisterComponent implements OnInit {
-
   registerForm!: FormGroup;
   loginForm!: FormGroup;
   errorMessage!: string;
@@ -24,7 +22,7 @@ export class RegisterComponent implements OnInit {
     private formBuilder: FormBuilder,
     private userService: UserserviceService,
     private notificationService: NotificationService,
-   
+    private snackBar: MatSnackBar // Ajout de MatSnackBar pour les notifications
   ) { }
 
   ngOnInit(): void {
@@ -55,7 +53,6 @@ export class RegisterComponent implements OnInit {
       this.userService.register(user).subscribe(
         (response) => {
           console.log('User registered successfully:', response);
-          // Vérifier l'e-mail après l'enregistrement
           this.notificationService.showSuccess('Vérifiez votre boîte e-mail pour activer votre compte.');
           this.verifyEmail();
           this.registerForm.reset();
@@ -63,6 +60,7 @@ export class RegisterComponent implements OnInit {
         (error) => {
           console.error('Registration failed:', error);
           this.errorMessage = 'Registration failed. Please try again.';
+          this.showSnackBarError(error);
         }
       );
     }
@@ -75,61 +73,67 @@ export class RegisterComponent implements OnInit {
         this.userService.verifyEmail(token).subscribe(
           (response) => {
             console.log('Email verification successful:', response);
-
           },
           (error) => {
             console.error('Email verification failed:', error);
+            this.showSnackBarError(error);
           }
         );
       }
     });
   }
 
- // RegisterComponent.ts
-
-login(): void {
-  if (this.loginForm.valid) {
-    const credentials = this.loginForm.value;
-    this.userService.login(credentials).subscribe(
-      (response) => {
-        console.log('User logged in successfully:', response);
-        this.userService.storeToken(response.token); 
-        this.userService.setUserRole(response.role); 
-
-
-        const role = response.role;
-        switch (role) {
-          case Role.ADMINISTRATEUR:
-            this.router.navigate(['/admin-dashboard']); 
-            break;
-          case Role.PATIENT:
-            this.router.navigate(['/patient-dashboard']); 
-            break;
-          default:
-            this.router.navigate(['/']); 
+  login(): void {
+    if (this.loginForm.valid) {
+      const credentials = this.loginForm.value;
+      this.userService.login(credentials).subscribe(
+        (response) => this.onLoginSuccess(response),
+        (error) => {
+          console.error('Login failed:', error);
+          this.errorMessage = 'Login failed. Please try again.';
+          this.showSnackBarError(error);
         }
-      },
-      (error) => {
-        console.error('Login failed:', error);
-      }
-    );
+      );
+    }
   }
-}
 
-  
-  
+  onLoginSuccess(response: any): void {
+    const token = response.access; // Supposons que vous avez un 'access' token dans la réponse
+    this.userService.setToken(token); // Stocker le token dans le UserService
+    console.log('User logged in successfully:', response);
+    this.userService.setUserRole(response.role); 
+
+    const role = response.role;
+    switch (role) {
+      case Role.ADMINISTRATEUR:
+        this.router.navigate(['/admin-dashboard']); 
+        break;
+      case Role.PATIENT:
+        this.router.navigate(['/patient-dashboard']); 
+        break;
+      default:
+        this.router.navigate(['/']); 
+    }
+  }
 
   loadScript(scriptUrl: string) {
-    const body = <HTMLDivElement> document.body;
+    const body = <HTMLDivElement>document.body;
     const script = document.createElement('script');
     script.innerHTML = '';
     script.src = scriptUrl;
     script.async = false;
     script.defer = true;
     body.appendChild(script);
-  } 
+  }
 
   redirectToForgotPassword(): void {
     this.router.navigate(['/resetpassword']);
+  }
+
+  showSnackBarError(error: any): void {
+    const errorMsg = error.error ? error.error.message : 'An error occurred. Please try again.';
+    this.snackBar.open(errorMsg, 'Close', {
+      duration: 5000,
+    });
   }
 }

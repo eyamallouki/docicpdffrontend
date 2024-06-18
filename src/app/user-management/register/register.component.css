@@ -40,8 +40,10 @@ body {
 h1 {
 	font-size: 20px;
 	font-weight: 100;
+	font-family: blood;
+	font-weight: bold;
 	margin: 0;
-	color: #050c79;
+	color: #055e52cc;
 }
 
 h2 {
@@ -49,7 +51,7 @@ h2 {
 	font-family: blood;
 	font-weight: bold; /* Modifier la valeur à bold pour le texte en gras */
 	margin: 0;
-	color: #d53d3ddc;
+	color: #e7c23ce7;
 }
 
 
@@ -210,11 +212,11 @@ input:focus {
 }
 
 .overlay {
-    background-image: url('src/assets/images/img4.jpg');
-    background-repeat: repeat-x;
-    background-size: 100%; /* Ajustez cette valeur selon vos besoins */
+    background-image: url('src/assets/images/new.jpg');
+    background-repeat: repeat-y;
+    background-size: 140%; /* Ajustez cette valeur selon vos besoins */
     background-position: center;
-    color: #f8f3f3;
+    color: #070707;
     position: relative;
     left: -100%;
     height: 100%;
@@ -354,7 +356,7 @@ footer a {
 }
 
 .background-image {
-  background-image: url('src/assets/images/img3.jpg'); /* Chemin vers votre image */
+  background-image: url('src/assets/images/OIP.jpg'); /* Chemin vers votre image */
   background-size: cover;
   background-position: center;
   filter: blur(5px); /* Valeur de flou */

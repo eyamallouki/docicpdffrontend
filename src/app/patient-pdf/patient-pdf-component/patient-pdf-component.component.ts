@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-patient-pdf-component',
@@ -6,5 +7,11 @@ import { Component } from '@angular/core';
   styleUrls: ['./patient-pdf-component.component.css']
 })
 export class PatientPdfComponentComponent {
+
+  constructor(private router: Router) { }
+ 
+  goToPatientPage() {
+    this.router.navigate(['/patient-dashboard']);
+}
 
 }

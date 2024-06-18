@@ -1,1 +1,50 @@
-<p>patient-pdf-component works!</p>
+<head>
+  <link href="https://fonts.googleapis.com/css2?family=Lato&display=swap" rel="stylesheet">
+  <link href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Lato&display=swap" rel="stylesheet">
+  <link href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+  <link href="https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css" rel="stylesheet" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
+</head>
+      <body>
+      
+       
+        <section class="home-section">
+          <app-side-bar></app-side-bar>
+          <div class="background-image"></div>
+          <div class="welcome-message" style="margin-top: 110px;">
+            
+            <h1 style="display: inline;">Bienvenue à </h1>
+            <img src="assets/images/logot.png" alt="Logo" width="140" height="85" style="display: inline; position: relative; top: 4px;">
+            <p>Analysez vos documents et vos dossiers médicaux facilement.</p>
+            <p>Expérience de soins de santé simplifiée et personnalisée à votre portée.</p>
+            <br>
+            <br>
+            <img src="assets/images/mm.png"  width="450" height="350" >
+        </div>
+        
+        </section>
+    
+        <script>
+          let sidebar = document.querySelector(".sidebar");
+          let closeBtn = document.querySelector("#btn");
+  
+          closeBtn.addEventListener("click", ()=>{
+              sidebar.classList.toggle("open");
+              menuBtnChange();
+          });
+  
+          function menuBtnChange() {
+              if(sidebar.classList.contains("open")){
+                  closeBtn.classList.replace("bx-menu", "bx-menu-alt-right");
+              } else {
+                  closeBtn.classList.replace("bx-menu-alt-right","bx-menu");
+              }
+          }
+      </script>
+      </body>
+
+    

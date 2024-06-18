@@ -1,0 +1,129 @@
+body {
+  font-family: 'Lato', sans-serif;
+  background-color: #f4f7f6;
+  color: #333;
+}
+
+.container {
+  max-width: 1200px; /* Increase max-width as desired */
+  margin: 20px auto;
+  padding: 0 20px; /* Increase padding as needed */
+}
+
+h2 {
+  font-size: 26px;
+  margin: 20px 0;
+  text-align: center;
+  color: #333;
+}
+
+h2 small {
+  font-size: 0.5em;
+}
+
+.responsive-table {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  border-collapse: collapse;
+  width: 100%; /* Ensure table takes full width of container */
+}
+
+.responsive-table li {
+  display: flex;
+  justify-content: space-between;
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  margin-bottom: -1px; /* Removes double borders */
+  background-color: #fff;
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.responsive-table li:hover {
+  box-shadow: 0px 0px 12px 0px rgba(0, 0, 0, 0.2);
+  transform: translateY(-5px);
+}
+
+.responsive-table .table-header {
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  background-color: #333;
+  color: #fff;
+}
+
+.responsive-table .col {
+  flex-basis: 20%;
+  text-align: center;
+  border-right: 1px solid #ddd; /* Add column separation */
+}
+
+.responsive-table .col:last-child {
+  border-right: none; /* Remove border from the last column */
+}
+
+@media all and (max-width: 767px) {
+  .responsive-table .table-header {
+    display: none;
+  }
+
+  .responsive-table li {
+    display: block;
+  }
+
+  .responsive-table .col {
+    flex-basis: 100%;
+    text-align: left;
+    border-right: none; /* Remove column borders on mobile */
+    border-bottom: 1px solid #ddd; /* Add row separation */
+  }
+
+  .responsive-table .col:before {
+    color: #333;
+    padding-right: 10px;
+    content: attr(data-label);
+    flex-basis: 50%;
+    text-align: right;
+  }
+}
+
+/* PDF styles */
+.pdf-header, .pdf-row {
+  background-color: #f4a7b4;
+  color: #721c24;
+}
+
+.pdf-row {
+  border-left: 4px solid #9a0e1c;
+}
+
+/* TXT styles */
+.txt-header, .txt-row {
+  background-color: #d1ecf1;
+  color: #0c5460;
+}
+
+.txt-row {
+  border-left: 4px solid #bee5eb;
+}
+
+/* JPG styles */
+.jpg-header, .jpg-row {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.jpg-row {
+  border-left: 4px solid #c3e6cb;
+}
+
+/* PNG styles */
+.png-header, .png-row {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.png-row {
+  border-left: 4px solid #ffeeba;
+}

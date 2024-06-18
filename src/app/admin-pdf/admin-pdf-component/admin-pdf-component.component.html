@@ -1,1 +1,85 @@
-<p>admin-pdf-component works!</p>
+<head>
+  <link href="https://fonts.googleapis.com/css2?family=Lato&display=swap" rel="stylesheet">
+  <link href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+  <link href="https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css" rel="stylesheet" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="sidebar">
+  <div class="logo-details">
+    <i class="bx bxl-c-plus-plus icon"></i>
+    <div class="logo_name">CodingLab</div>
+    <i class="bx bx-menu" id="btn"></i>
+  </div>
+  <ul class="nav-list">
+    <li>
+      <a [routerLink]="['/admin-dashboard']">
+          <i class="bx bx-grid-alt"></i>
+          <span class="links_name">Home</span>
+      </a>
+      <span class="tooltip">Home</span>
+    </li>
+    <li>
+      <a [routerLink]="['/assigned-patients']">
+        <i class="bx bx-user"></i>
+        <span class="links_name">Patient List</span>
+      </a>
+      <span class="tooltip">Patient List</span>
+    </li>
+    <li>
+      <a href="#">
+        <i class="bx bx-pie-chart-alt-2"></i>
+        <span class="links_name">Files</span>
+      </a>
+      <span class="tooltip">Files</span>
+    </li>
+    <li>
+      <a href="#">
+        <i class="bx bx-cog"></i>
+        <span class="links_name">Setting</span>
+      </a>
+      <span class="tooltip">Setting</span>
+    </li>
+    <li>
+      <a href="#">
+        <i class="bx bx-log-out" id="log_out"></i>
+        <span class="links_name">LogOut</span>
+      </a>
+      <span class="tooltip">LogOut</span>
+    </li>
+  </ul>
+</div>
+<section class="home-section">
+  <div class="background-image"></div>
+  <div class="welcome-message" style="margin-top: 110px;">
+    <h1 style="display: inline;">Bienvenue à </h1>
+    <img src="assets/images/logot.png" alt="Logo" width="140" height="85" style="display: inline; position: relative; top: 4px;">
+    <p>Analysez vos documents et vos dossiers médicaux facilement.</p>
+    <p>Expérience de soins de santé simplifiée et personnalisée à votre portée.</p>
+    <br>
+    <br>
+    <img src="assets/images/mm.png"  width="450" height="350">
+  </div>
+</section>
+
+<script>
+  let sidebar = document.querySelector(".sidebar");
+  let closeBtn = document.querySelector("#btn");
+
+  closeBtn.addEventListener("click", ()=>{
+      sidebar.classList.toggle("open");
+      menuBtnChange();
+  });
+
+  function menuBtnChange() {
+      if(sidebar.classList.contains("open")){
+          closeBtn.classList.replace("bx-menu", "bx-menu-alt-right");
+      } else {
+          closeBtn.classList.replace("bx-menu-alt-right","bx-menu");
+      }
+  }
+</script>
+</body>
