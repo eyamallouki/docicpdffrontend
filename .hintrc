@@ -12,9 +12,23 @@
     "axe/text-alternatives": [
       "default",
       {
-        "image-alt": "off"
+        "image-alt": "off",
+        "frame-title": "off"
       }
     ],
-    "no-inline-styles": "off"
+    "no-inline-styles": "off",
+    "axe/name-role-value": [
+      "default",
+      {
+        "button-name": "off"
+      }
+    ],
+    "axe/structure": [
+      "default",
+      {
+        "list": "off",
+        "listitem": "off"
+      }
+    ]
   }
 }

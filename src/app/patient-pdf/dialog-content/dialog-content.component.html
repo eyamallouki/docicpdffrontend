@@ -1,83 +1,148 @@
 <div class="container">
-  <ul class="responsive-table">
-    <div *ngIf="data.fileType === 'PDF'">
-      <h2 class="pdf-header">PDF Files</h2>
-      <li *ngIf="pdfFiles.length > 0" class="table-header pdf-header">
-        <div class="col col-1">Title</div>
-        <div class="col col-2">Total Pages</div>
-        <div class="col col-3">Category</div>
-        <div class="col col-4">Status</div>
-        <div class="col col-5">File</div>
-      </li>
-      <li *ngFor="let file of pdfFiles" class="table-row pdf-row">
-        <div class="col col-1" data-label="Title">{{ file.titre }}</div>
-        <div class="col col-2" data-label="Total Pages">{{ file.total_pages }}</div>
-        <div class="col col-3" data-label="Category">{{ file.categorie }}</div>
-        <div class="col col-4" data-label="Status">{{ file.etat }}</div>
-        <div class="col col-5" data-label="File">
-          <a [href]="sanitizeFileUrl(file.file)" target="_blank">{{ file.file }}</a>
+  <div class="file-list">
+    <ul class="responsive-table">
+      <!-- PDF Files Section -->
+      <div *ngIf="data.fileType === 'PDF'" class="scrollable-table">
+        <div class="pdf-icon-container">
+          <img class="pdf-icon" src="https://www.svgrepo.com/show/66745/pdf.svg" alt="PDF Icon">
         </div>
-      </li>
-    </div>
+        <br>
+        <li *ngIf="pdfFiles.length > 0" class="table-header pdf-header">
+          <div class="col col-1">Title</div>
+          <div class="col col-2">Total Pages</div>
+          <div class="col col-3">Category</div>
+          <div class="col col-4">Status</div>
+          <div class="col col-5">Modified Version</div> 
+          <div class="col col-6">Actions</div>
+        </li>
+        <li *ngFor="let file of pdfFiles.slice((p-1)*3, p*3)" class="table-row pdf-row">
+          <div class="col col-1" data-label="Title">{{ file.titre }}</div>
+          <div class="col col-2" data-label="Total Pages">{{ file.total_pages }}</div>
+          <div class="col col-3" data-label="Category">{{ file.categorie }}</div>
+          <div class="col col-4" data-label="Status">{{ file.etat }}</div>
+          <div class="col col-6" data-label="Actions">
+            <button class="icon-button" (click)="viewPdf(file.file)">
+              <i class="fas fa-eye"></i>
+            </button>
+            <button class="icon-buttonp" (click)="deletePdf(file.id)">
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
+        </li>
+        <pagination-controls (pageChange)="onPageChange($event)" class="pagination"></pagination-controls>
+      </div>
+      
 
-    <div *ngIf="data.fileType === 'TXT'">
-      <h2 class="txt-header">TXT Files</h2>
-      <li *ngIf="txtFiles.length > 0" class="table-header txt-header">
-        <div class="col col-1">Title</div>
-        <div class="col col-2">Total Pages</div>
-        <div class="col col-3">Category</div>
-        <div class="col col-4">Status</div>
-        <div class="col col-5">File</div>
-      </li>
-      <li *ngFor="let file of txtFiles" class="table-row txt-row">
-        <div class="col col-1" data-label="Title">{{ file.titre }}</div>
-        <div class="col col-2" data-label="Total Pages">{{ file.total_pages }}</div>
-        <div class="col col-3" data-label="Category">{{ file.categorie }}</div>
-        <div class="col col-4" data-label="Status">{{ file.etat }}</div>
-        <div class="col col-5" data-label="File">
-          <a [href]="sanitizeFileUrl(file.file)" target="_blank">{{ file.file }}</a>
-        </div>
-      </li>
-    </div>
 
-    <div *ngIf="data.fileType === 'JPG'">
-      <h2 class="jpg-header">JPG Images</h2>
-      <li *ngIf="jpgFiles.length > 0" class="table-header jpg-header">
-        <div class="col col-1">Title</div>
-        <div class="col col-2">Total Pages</div>
-        <div class="col col-3">Category</div>
-        <div class="col col-4">Status</div>
-        <div class="col col-5">File</div>
-      </li>
-      <li *ngFor="let file of jpgFiles" class="table-row jpg-row">
-        <div class="col col-1" data-label="Title">{{ file.titre }}</div>
-        <div class="col col-2" data-label="Total Pages">{{ file.total_pages }}</div>
-        <div class="col col-3" data-label="Category">{{ file.categorie }}</div>
-        <div class="col col-4" data-label="Status">{{ file.etat }}</div>
-        <div class="col col-5" data-label="File">
-          <a [href]="sanitizeFileUrl(file.file)" target="_blank">{{ file.file }}</a>
+      <!-- TXT Files Section -->
+      <div *ngIf="data.fileType === 'TXT'" class="scrollable-table">
+        <div class="pdf-icon-container">
+          <img class="pdf-icon" src="https://www.svgrepo.com/show/90375/doc.svg" alt="PDF Icon" class="pdf-icon">
         </div>
-      </li>
-    </div>
+        <br>
+        <li *ngIf="txtFiles.length > 0" class="table-header txt-header">
+          <div class="col col-1">Title</div>
+          <div class="col col-2">Total Pages</div>
+          <div class="col col-3">Category</div>
+          <div class="col col-4">Status</div>
+          <div class="col col-5">Actions</div>
+        </li>
+        <li *ngFor="let file of txtFiles.slice((p-1)*3, p*3)" class="table-row txt-row">
+          <div class="col col-1" data-label="Title">{{ file.titre }}</div>
+          <div class="col col-2" data-label="Total Pages">{{ file.total_pages }}</div>
+          <div class="col col-3" data-label="Category">{{ file.categorie }}</div>
+          <div class="col col-4" data-label="Status">{{ file.etat }}</div>
+          <div class="col col-5" data-label="Actions">
+            <button class="icon-button" (click)="viewPdf(file.file)">
+              <i class="fas fa-eye"></i>
+            </button>
+            <button class="icon-buttonp" (click)="deletePdf(file.id)">
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
+        </li>
+        <pagination-controls (pageChange)="onPageChange($event)" class="pagination"></pagination-controls>
+      </div>
 
-    <div *ngIf="data.fileType === 'PNG'">
-      <h2 class="png-header">PNG Images</h2>
-      <li *ngIf="pngFiles.length > 0" class="table-header png-header">
-        <div class="col col-1">Title</div>
-        <div class="col col-2">Total Pages</div>
-        <div class="col col-3">Category</div>
-        <div class="col col-4">Status</div>
-        <div class="col col-5">File</div>
-      </li>
-      <li *ngFor="let file of pngFiles" class="table-row png-row">
-        <div class="col col-1" data-label="Title">{{ file.titre }}</div>
-        <div class="col col-2" data-label="Total Pages">{{ file.total_pages }}</div>
-        <div class="col col-3" data-label="Category">{{ file.categorie }}</div>
-        <div class="col col-4" data-label="Status">{{ file.etat }}</div>
-        <div class="col col-5" data-label="File">
-          <a [href]="sanitizeFileUrl(file.file)" target="_blank">{{ file.file }}</a>
-        </div>
-      </li>
+<!-- JPG Files Section -->
+<div *ngIf="data.fileType === 'JPG'" class="scrollable-table">
+  <div class="pdf-icon-container">
+    <img class="pdf-icon" src="https://www.svgrepo.com/show/19982/jpg.svg" alt="PDF Icon" class="pdf-icon">
+  </div>
+  <br>
+  <li *ngIf="jpgFiles.length > 0" class="table-header jpg-header">
+    <div class="col col-1">Title</div>
+    <div class="col col-2">Total Pages</div>
+    <div class="col col-3">Category</div>
+    <div class="col col-4">Status</div>
+    <div class="col col-5">Actions</div>
+  </li>
+  <li *ngFor="let file of jpgFiles.slice((p-1)*3, p*3)" class="table-row jpg-row">
+    <div class="col col-1" data-label="Title">{{ file.titre }}</div>
+    <div class="col col-2" data-label="Total Pages">{{ file.total_pages }}</div>
+    <div class="col col-3" data-label="Category">{{ file.categorie }}</div>
+    <div class="col col-4" data-label="Status">{{ file.etat }}</div>
+    <div class="col col-5" data-label="Actions">
+      <a class="icon-link" >
+        <i class="fas fa-eye"></i>
+      </a>
+      <button class="icon-buttonp" (click)="deletePdf(file.id)">
+        <i class="fas fa-trash"></i>
+      </button>
     </div>
-  </ul>
+  </li>
+  <pagination-controls (pageChange)="onPageChange($event)" class="pagination"></pagination-controls>
 </div>
+
+<!-- PNG Files Section -->
+<div *ngIf="data.fileType === 'PNG'" class="scrollable-table">
+  <div class="pdf-icon-container">
+    <img class="pdf-icon" src="https://www.svgrepo.com/show/66745/pdf.svg" alt="PDF Icon" class="pdf-icon">
+  </div>
+  <br>
+  <li *ngIf="pngFiles.length > 0" class="table-header png-header">
+    <div class="col col-1">Title</div>
+    <div class="col col-2">Total Pages</div>
+    <div class="col col-3">Category</div>
+    <div class="col col-4">Status</div>
+    <div class="col col-5">Actions</div>
+  </li>
+  <li *ngFor="let file of pngFiles.slice((p-1)*3, p*3)" class="table-row png-row">
+    <div class="col col-1" data-label="Title">{{ file.titre }}</div>
+    <div class="col col-2" data-label="Total Pages">{{ file.total_pages }}</div>
+    <div class="col col-3" data-label="Category">{{ file.categorie }}</div>
+    <div class="col col-4" data-label="Status">{{ file.etat }}</div>
+    <div class="col col-5" data-label="Actions">
+      <a class="icon-link" >
+        <i class="fas fa-eye"></i>
+      </a>
+      <button class="icon-buttonp" (click)="deletePdf(file.id)">
+        <i class="fas fa-trash"></i>
+      </button>
+    </div>
+  </li>
+  <pagination-controls (pageChange)="onPageChange($event)" class="pagination"></pagination-controls>
+</div>
+
+
+
+
+
+
+
+
+    
+    <!-- Visionneuse de PDF -->
+    <ngx-extended-pdf-viewer
+      *ngIf="pdfViewerVisible"
+      [src]="selectedPdfUrl ?? ''"
+      useBrowserLocale="true"
+      height="80vh"
+      (error)="onPdfLoadError($event)"
+      [showZoomButtons]="true"
+      [showFindButton]="true"
+      [showPresentationModeButton]="true"
+      [showDownloadButton]="true"
+      [showPrintButton]="true"
+      [zoom]="1.0">
+    </ngx-extended-pdf-viewer>

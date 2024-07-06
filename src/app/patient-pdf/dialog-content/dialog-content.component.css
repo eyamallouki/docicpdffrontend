@@ -1,13 +1,35 @@
+/* Global Styles */
+
+
 body {
   font-family: 'Lato', sans-serif;
   background-color: #f4f7f6;
   color: #333;
+  margin: 0;
+  padding: 0;
 }
 
+.pdf-icon-container {
+  display: flex;
+  justify-content: center; /* Centrer horizontalement */
+  align-items: center; /* Centrer verticalement */
+  width: 100%; /* Ajuster la largeur selon vos besoins */
+  height: 100%; /* Ajuster la hauteur selon vos besoins */
+}
+
+.pdf-icon {
+  width: 70px; /* Définir la largeur de l'icône */
+  height: 70px; /* Définir la hauteur de l'icône */
+}
+
+
 .container {
-  max-width: 1200px; /* Increase max-width as desired */
+  max-width: 1300px;
   margin: 20px auto;
-  padding: 0 20px; /* Increase padding as needed */
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 h2 {
@@ -17,16 +39,12 @@ h2 {
   color: #333;
 }
 
-h2 small {
-  font-size: 0.5em;
-}
-
 .responsive-table {
   list-style: none;
   padding: 0;
   margin: 0;
+  width: 100%;
   border-collapse: collapse;
-  width: 100%; /* Ensure table takes full width of container */
 }
 
 .responsive-table li {
@@ -35,7 +53,7 @@ h2 small {
   padding: 15px;
   border: 1px solid #ddd;
   border-radius: 3px;
-  margin-bottom: -1px; /* Removes double borders */
+  margin-bottom: -1px;
   background-color: #fff;
   transition: box-shadow 0.3s ease, transform 0.3s ease;
 }
@@ -49,18 +67,14 @@ h2 small {
   font-size: 14px;
   text-transform: uppercase;
   letter-spacing: 0.03em;
-  background-color: #333;
+  background-color: #076979;
   color: #fff;
+  border-bottom: 2px solid #ddd;
 }
 
 .responsive-table .col {
   flex-basis: 20%;
   text-align: center;
-  border-right: 1px solid #ddd; /* Add column separation */
-}
-
-.responsive-table .col:last-child {
-  border-right: none; /* Remove border from the last column */
 }
 
 @media all and (max-width: 767px) {
@@ -75,12 +89,11 @@ h2 small {
   .responsive-table .col {
     flex-basis: 100%;
     text-align: left;
-    border-right: none; /* Remove column borders on mobile */
-    border-bottom: 1px solid #ddd; /* Add row separation */
+    border-bottom: 1px solid #ddd;
   }
 
   .responsive-table .col:before {
-    color: #333;
+    color: #a951ed;
     padding-right: 10px;
     content: attr(data-label);
     flex-basis: 50%;
@@ -88,17 +101,39 @@ h2 small {
   }
 }
 
-/* PDF styles */
+/* Button Styles */
+.icon-button, .icon-buttonp, .icon-link, .icon-linkp {
+  background: none;
+  border: none;
+  color: #92037f;
+  cursor: pointer;
+  font-size: 18px;
+  padding: 10px;
+  transition: color 0.3s ease;
+}
+
+.icon-buttonp, .icon-linkp {
+  color: #157d5a;
+}
+
+.icon-button:hover, .icon-link:hover {
+  color: #dfd508;
+}
+
+.icon-buttonp:hover, .icon-linkp:hover {
+  color: #ff5252;
+}
+
+/* File Type Headers and Rows */
 .pdf-header, .pdf-row {
-  background-color: #f4a7b4;
-  color: #721c24;
+  background-color: #e7f3ff;
+  color: #1c3b57;
 }
 
 .pdf-row {
-  border-left: 4px solid #9a0e1c;
+  border-left: 4px solid #0056b3;
 }
 
-/* TXT styles */
 .txt-header, .txt-row {
   background-color: #d1ecf1;
   color: #0c5460;
@@ -108,7 +143,6 @@ h2 small {
   border-left: 4px solid #bee5eb;
 }
 
-/* JPG styles */
 .jpg-header, .jpg-row {
   background-color: #d4edda;
   color: #155724;
@@ -118,7 +152,6 @@ h2 small {
   border-left: 4px solid #c3e6cb;
 }
 
-/* PNG styles */
 .png-header, .png-row {
   background-color: #fff3cd;
   color: #856404;
@@ -126,4 +159,32 @@ h2 small {
 
 .png-row {
   border-left: 4px solid #ffeeba;
+}
+
+.btn-icon {
+  padding: 0.25rem 0.5rem;
+}
+
+.list-unstyled {
+  list-style: none;
+  padding-left: 0;
+}
+
+.modification-history li {
+  margin-bottom: 5px;
+}
+
+.input-group-append {
+  display: flex;
+}
+
+.input-group-append button {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+@media (max-width: 768px) {
+  .table-header, .pdf-row {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }

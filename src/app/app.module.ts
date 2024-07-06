@@ -12,12 +12,16 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { AuthInterceptor } from './interceptors/AuthInterceptor';
 import { AdminPdfModule } from './admin-pdf/admin-pdf.module';
 import { NgxPaginationModule } from 'ngx-pagination';
+import { MatIconModule } from '@angular/material/icon';
 
 import { ToastrModule } from 'ngx-toastr';
 import { NgxFileDropModule } from 'ngx-file-drop';
 import { MatDialogModule } from '@angular/material/dialog';
 
 import { PatientPdfModule } from './patient-pdf/patient-pdf.module';
+import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
+import { NgImageSliderModule } from 'ng-image-slider';
+
 
 
 
@@ -31,12 +35,15 @@ import { PatientPdfModule } from './patient-pdf/patient-pdf.module';
   imports: [
     BrowserModule,
     AppRoutingModule,
+    NgImageSliderModule,
     RouterModule,
     HttpClientModule,
     UserManagementModule,
+    NgxExtendedPdfViewerModule,
     AdminPdfModule,
     MatSnackBarModule,
     NgxPaginationModule ,
+    MatIconModule,
     NgxFileDropModule,
     BrowserAnimationsModule, 
     MatDialogModule,
