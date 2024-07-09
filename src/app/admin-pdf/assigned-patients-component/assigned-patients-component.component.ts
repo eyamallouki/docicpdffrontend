@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { UserserviceService } from 'src/app/user-management/service/userservice.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { PageEvent } from '@angular/material/paginator';
 
 @Component({
   selector: 'app-assigned-patients',
@@ -11,14 +12,16 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 })
 export class AssignedPatientsComponentComponent implements OnInit {
   patients: any[] = [];
+  paginatedPatients: any[] = [];
+  pageSize = 2;
+  currentPage = 0;
   assignForm!: FormGroup;
-  currentPage = 1;
 
   constructor(private http: HttpClient, private userService: UserserviceService, private snackBar: MatSnackBar,
               private fb: FormBuilder) {}
 
   ngOnInit() {
-    this.loadAssignedPatients();
+    this.loadPatients();
     this.initAssignForm();
   }
 
@@ -50,10 +53,11 @@ export class AssignedPatientsComponentComponent implements OnInit {
     }
   }
 
-  loadAssignedPatients() {
-    this.http.get('http://localhost:8000/auth/assigned-patients/').subscribe(
+  loadPatients() {
+    this.http.get('http://localhost:8000/auth/all-patients/').subscribe(
       (data: any) => {
         this.patients = data;
+        this.paginatePatients();
       },
       (error) => {
         console.error('Error loading patients:', error);
@@ -61,7 +65,15 @@ export class AssignedPatientsComponentComponent implements OnInit {
     );
   }
 
-  onPageChange(event: any) {
-    this.currentPage = event.page;
+  paginatePatients() {
+    const startIndex = this.currentPage * this.pageSize;
+    const endIndex = startIndex + this.pageSize;
+    this.paginatedPatients = this.patients.slice(startIndex, endIndex);
+  }
+
+  onPageChange(event: PageEvent) {
+    this.currentPage = event.pageIndex;
+    this.pageSize = event.pageSize;
+    this.paginatePatients();
   }
 }

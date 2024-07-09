@@ -124,6 +124,8 @@ export class UserserviceService {
       return null;
     }
 
+    
+
     try {
       const decodedToken: any = jwtDecode(token);
       return decodedToken.user_id || null;
@@ -132,19 +134,12 @@ export class UserserviceService {
       return null;
     }
   }
-  assignUser(id: number, data: any): Observable<any> {
-    return this.http.patch<any>(`${this.apiUrl}/assign-user/${id}/`, data);
+  getAllPatients(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/all-patients/`);
   }
 
-  getAssignedPatients(): Observable<User[]> {
-    const token = this.getToken();
-    if (token) {
-      const headers = new HttpHeaders({
-        'Authorization': `Bearer ${token}`
-      });
-      return this.http.get<User[]>(`${this.apiUrl}/assigned-patients/`, { headers });
-    } else {
-      throw new Error('No token available');
-    }
+  assignUser(patientId: number, data: any): Observable<any> {
+    return this.http.patch(`${this.apiUrl}/assign-patient/${patientId}/`, data);
   }
+  
 }

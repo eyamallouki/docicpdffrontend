@@ -5,6 +5,9 @@ import { ToastrService } from 'ngx-toastr';
 import { UserserviceService } from 'src/app/user-management/service/userservice.service';
 import { PatientserviceService } from '../service/patientservice.service';
 import { PDFDocument, rgb } from 'pdf-lib';
+import { HttpClient } from '@angular/common/http';
+import * as docx from 'docx-preview';
+
 
 @Component({
   selector: 'app-dialog-content',
@@ -12,8 +15,8 @@ import { PDFDocument, rgb } from 'pdf-lib';
   styleUrls: ['./dialog-content.component.css']
 })
 export class DialogContentComponent implements OnInit {
-  @ViewChild('imageInput', { static: false }) imageInput!: ElementRef<HTMLInputElement>;
-  pdfFiles: any[] = [];
+  @ViewChild('docxViewer', { static: false }) docxViewer!: ElementRef;
+   pdfFiles: any[] = [];
   txtFiles: any[] = [];
   jpgFiles: any[] = [];
   pngFiles: any[] = [];
@@ -31,13 +34,23 @@ export class DialogContentComponent implements OnInit {
   imageObject: Array<object> = [];
   images: SafeResourceUrl[] = [];
 
+  imageSliderOptions = {
+    imageSources: [] as string[], 
+    slideInterval: 3000,
+    showArrows: true,
+    showDots: true,
+    showThumbnail: false
+  };
+
   constructor(
     public dialogRef: MatDialogRef<DialogContentComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { fileType: string },
     private fileService: PatientserviceService,
     private authService: UserserviceService,
     private sanitizer: DomSanitizer,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private http: HttpClient,
+    
   ) {}
 
   ngOnInit() {
@@ -66,6 +79,11 @@ export class DialogContentComponent implements OnInit {
     this.pdfViewerVisible = true; // Activer la visibilité du viewer
     this.isSignatureMode = false; // Assurez-vous que le mode signature est désactivé lors de la visualisation du PDF
   
+  }
+
+  closePdfViewer(): void {
+    this.pdfViewerVisible = false;
+    this.selectedPdfUrl = null;
   }
 
  
@@ -150,7 +168,46 @@ export class DialogContentComponent implements OnInit {
 
   sanitizeUrl(url: string): SafeUrl {
     return this.sanitizer.bypassSecurityTrustUrl(url);
+  } 
+
+  viewDocxFile(filename: string): void {
+    const docxUrl = this.getDocxUrl(filename);
+    this.http.get(docxUrl, { responseType: 'arraybuffer' }).subscribe(
+      (data: ArrayBuffer) => {
+        const container = this.docxViewer.nativeElement;
+        container.innerHTML = '';
+        docx.renderAsync(data, container, undefined, {
+          className: 'docx',
+          inWrapper: true,
+          ignoreWidth: false,
+          ignoreHeight: false,
+          ignoreFonts: false,
+          breakPages: true,
+          ignoreLastRenderedPageBreak: true,
+          experimental: false,
+          trimXmlDeclaration: true,
+          useBase64URL: false,
+          renderChanges: false,
+          renderHeaders: true,
+          renderFooters: true,
+          renderFootnotes: true,
+          renderEndnotes: true,
+          renderComments: false,
+          debug: false
+        });
+      },
+      error => {
+        console.error('Error fetching docx file:', error);
+      }
+    );
   }
+  
+  getDocxUrl(filename: string): string {
+    return `http://localhost:8000/pdf/media/pdfs/${filename}`;
+  }
+  
+  
+ 
 
   
 }

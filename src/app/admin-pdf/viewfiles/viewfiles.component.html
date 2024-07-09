@@ -1,0 +1,204 @@
+<head>
+    <link href="https://fonts.googleapis.com/css2?family=Lato&display=swap" rel="stylesheet">
+    <link href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link href="https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css" rel="stylesheet" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="sidebar">
+      <div class="logo-details">
+        <i class="bx bxl-c-plus-plus icon"></i>
+        <div class="logo_name">CodingLab</div>
+        <i class="bx bx-menu" id="btn"></i>
+      </div>
+      <ul class="nav-list">
+        <li>
+          <a [routerLink]="['/admin-dashboard']">
+            <i class="bx bx-grid-alt"></i>
+            <span class="links_name">Home</span>
+          </a>
+          <span class="tooltip">Home</span>
+        </li>
+        <li>
+          <a [routerLink]="['/assigned-patients']">
+            <i class="bx bx-user"></i>
+            <span class="links_name">Patient List</span>
+          </a>
+          <span class="tooltip">Patient List</span>
+        </li>
+        <li>
+          <a href="#">
+            <i class="bx bx-pie-chart-alt-2"></i>
+            <span class="links_name">Files</span>
+          </a>
+          <span class="tooltip">Files</span>
+        </li>
+        <li>
+          <a href="#">
+            <i class="bx bx-cog"></i>
+            <span class="links_name">Setting</span>
+          </a>
+          <span class="tooltip">Setting</span>
+        </li>
+        <li>
+          <a href="#">
+            <i class="bx bx-log-out" id="log_out"></i>
+            <span class="links_name">LogOut</span>
+          </a>
+          <span class="tooltip">LogOut</span>
+        </li>
+      </ul>
+    </div>
+    <section class="home-section">
+        <div class="background-image"></div>
+        <div class="container">
+            <div class="file-list">
+                <ul class="responsive-table">
+                  <!-- PDF Files Section -->
+                  <div *ngIf="pdfFiles.length > 0" class="scrollable-table">
+                    <div class="pdf-icon-container">
+                      <img class="pdf-icon" src="https://www.svgrepo.com/show/66745/pdf.svg" alt="PDF Icon">
+                    </div>
+                    <br>
+                    <li class="table-header pdf-header">
+                      <div class="col col-1">Title</div>
+                      <div class="col col-2">Total Pages</div>
+                      <div class="col col-3">Category</div>
+                      <div class="col col-4">Status</div>
+                      <div class="col col-5">Modified Version</div>
+                      <div class="col col-6">Actions</div>
+                    </li>
+                    <li *ngFor="let file of pdfFiles" class="table-row pdf-row">
+                      <div class="col col-1" data-label="Title">{{ file.titre }}</div>
+                      <div class="col col-2" data-label="Total Pages">{{ file.total_pages }}</div>
+                      <div class="col col-3" data-label="Category">{{ file.categorie }}</div>
+                      <div class="col col-4" data-label="Status">{{ file.etat }}</div>
+                      <div class="col col-5" data-label="Modified Version">{{ file.date_modification }}</div>
+                      <div class="col col-6" data-label="Actions">
+                        <button class="icon-button" (click)="viewPdf(file.file)">
+                          <i class="fas fa-eye"></i> View
+                        </button>
+                        <button class="icon-buttonp" (click)="deletePdf(file.id)">
+                          <i class="fas fa-trash"></i> Delete
+                        </button>
+                      </div>
+                    </li> 
+              
+                    <div class="file-viewer" *ngIf="pdfViewerVisible">
+                      <button (click)="closePdfViewer()">Close</button>
+                      <ngx-extended-pdf-viewer
+                        *ngIf="pdfViewerVisible && selectedPdfUrl"
+                        [src]="selectedPdfUrl ?? ''"
+                        useBrowserLocale="true"
+                        height="80vh"
+                        (error)="onPdfLoadError($event)"
+                        [showZoomButtons]="true"
+                        [showFindButton]="true"
+                        [showPresentationModeButton]="true"
+                        [showDownloadButton]="true"
+                        [showPrintButton]="true"
+                        [zoom]="40.0">
+                      </ngx-extended-pdf-viewer>
+                    </div>
+
+  
+                  </div>
+          <br>
+                <!-- TXT Files Section -->
+                <div class="pdf-icon-container">
+                    <img class="pdf-icon" src="https://www.svgrepo.com/show/90375/doc.svg" alt="PDF Icon" class="pdf-icon">
+                  </div>
+                  <br>
+                <div *ngIf="txtFiles.length > 0" class="scrollable-table">
+                  <li class="table-header txt-header">
+                    <div class="col col-1">Title</div>
+                    <div class="col col-2">Category</div>
+                    <div class="col col-3">Status</div>
+                    <div class="col col-4">Modified Version</div>
+                    <div class="col col-5">Actions</div>
+                  </li>
+                  <li *ngFor="let file of txtFiles" class="table-row txt-row">
+                    <div class="col col-1" data-label="Title">{{ file.titre }}</div>
+                    <div class="col col-2" data-label="Category">{{ file.categorie }}</div>
+                    <div class="col col-3" data-label="Status">{{ file.etat }}</div>
+                    <div class="col col-4" data-label="Modified Version">{{ file.date_modification }}</div>
+                    <div class="col col-5" data-label="Actions">
+                      <button class="icon-button" (click)="viewPdf(file.file)">
+                        <i class="fas fa-eye"></i> View
+                      </button>
+                      <button class="icon-buttonp" (click)="deletePdf(file.id)">
+                        <i class="fas fa-trash"></i> Delete
+                      </button>
+                    </div>
+                  </li>
+                </div>
+          <br>
+          <div class="pdf-icon-container">
+            <img class="pdf-icon" src="https://www.svgrepo.com/show/19982/jpg.svg" alt="PDF Icon" class="pdf-icon">
+          </div>
+          <br>
+                <!-- JPG Files Section -->
+                <div *ngIf="jpgFiles.length > 0" class="scrollable-table">
+                  <li class="table-header jpg-header">
+                    <div class="col col-1">Title</div>
+                    <div class="col col-2">Category</div>
+                    <div class="col col-3">Status</div>
+                    <div class="col col-4">Modified Version</div>
+                    <div class="col col-5">Actions</div>
+                  </li>
+                  <li *ngFor="let file of jpgFiles" class="table-row jpg-row">
+                    <div class="col col-1" data-label="Title">{{ file.titre }}</div>
+                    <div class="col col-2" data-label="Category">{{ file.categorie }}</div>
+                    <div class="col col-3" data-label="Status">{{ file.etat }}</div>
+                    <div class="col col-4" data-label="Modified Version">{{ file.date_modification }}</div>
+                    <div class="col col-5" data-label="Actions">
+                      <button class="icon-button" (click)="viewPdf(file.file)">
+                        <i class="fas fa-eye"></i> View
+                      </button>
+                      <button class="icon-buttonp" (click)="deletePdf(file.id)">
+                        <i class="fas fa-trash"></i> Delete
+                      </button>
+                    </div>
+                  </li>
+                </div>
+          <br>
+                <!-- PNG Files Section -->
+                <div class="pdf-icon-container">
+                    <img class="pdf-icon" src="https://www.svgrepo.com/show/19982/jpg.svg" alt="PDF Icon" class="pdf-icon">
+                  </div>
+                  <br>
+                <div *ngIf="pngFiles.length > 0" class="scrollable-table">
+                  <li class="table-header png-header">
+                    <div class="col col-1">Title</div>
+                    <div class="col col-2">Category</div>
+                    <div class="col col-3">Status</div>
+                    <div class="col col-4">Modified Version</div>
+                    <div class="col col-5">Actions</div>
+                  </li>
+                  <li *ngFor="let file of pngFiles" class="table-row png-row">
+                    <div class="col col-1" data-label="Title">{{ file.titre }}</div>
+                    <div class="col col-2" data-label="Category">{{ file.categorie }}</div>
+                    <div class="col col-3" data-label="Status">{{ file.etat }}</div>
+                    <div class="col col-4" data-label="Modified Version">{{ file.date_modification }}</div>
+                    <div class="col col-5" data-label="Actions">
+                      <button class="icon-button" (click)="viewPdf(file.file)">
+                        <i class="fas fa-eye"></i> View
+                      </button>
+                      <button class="icon-buttonp" (click)="deletePdf(file.id)">
+                        <i class="fas fa-trash"></i> Delete
+                      </button>
+                    </div>
+                  </li>
+                </div>
+          
+              </ul>
+            </div>
+          </div>
+          
+          
+      </section>
+
+
+  

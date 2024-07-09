@@ -16,7 +16,7 @@ import { AppRoutingModule } from '../app-routing.module';
 import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { MatIconModule } from '@angular/material/icon';
-import { NgImageSliderModule } from 'ng-image-slider';
+import { NgxDocViewerModule } from 'ngx-doc-viewer';
 
 
 
@@ -28,23 +28,24 @@ import { NgImageSliderModule } from 'ng-image-slider';
     ListpdfComponentComponent,
     DialogContentComponent,
     SideBarComponent,
+
   
   ],
   imports: [
     CommonModule,
     FormsModule,
-    NgImageSliderModule,
     NgxFileDropModule,
     NgxExtendedPdfViewerModule,
     NgxPaginationModule ,
     BrowserAnimationsModule,
-     
     MatFormFieldModule,
+    NgxDocViewerModule,
     MatDialogModule,
     AppRoutingModule,
     MatIconModule,
     BrowserAnimationsModule, 
     ToastrModule.forRoot(), 
+    NgxDocViewerModule
   ]
 })
 export class PatientPdfModule { }

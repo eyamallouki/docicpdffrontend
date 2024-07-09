@@ -11,6 +11,7 @@ import { ProfilepatientComponent } from './patient-pdf/profilepatient/profilepat
 import { UploadfilepatientComponent } from './patient-pdf/patient-pdf/uploadfilepatient/uploadfilepatient.component';
 import { AssignedPatientsComponentComponent } from './admin-pdf/assigned-patients-component/assigned-patients-component.component';
 import { ListpdfComponentComponent } from './patient-pdf/listpdf-component/listpdf-component.component';
+import { ViewfilesComponent } from './admin-pdf/viewfiles/viewfiles.component';
 
 
 const routes: Routes = [
@@ -22,6 +23,7 @@ const routes: Routes = [
   {path: 'profilepatient', component:ProfilepatientComponent},
   {path:'upload', component:UploadfilepatientComponent},
   {path:'listpdf', component:ListpdfComponentComponent},
+  { path: 'viewfile/:id', component: ViewfilesComponent },
   { path: 'assigned-patients', component: AssignedPatientsComponentComponent,canActivate: [AuthGuard], data: { roles: [Role.ADMINISTRATEUR] } } 
  
  

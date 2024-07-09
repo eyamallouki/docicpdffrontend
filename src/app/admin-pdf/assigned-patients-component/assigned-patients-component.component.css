@@ -739,3 +739,38 @@ display: none;
 .stats .parameter {
   font-size: 11px;
 }
+
+/* Add your custom styles here */
+
+.custom-text {
+  color: rgb(240, 229, 233);
+  font-family: blood;
+}
+
+.custom-btn {
+  padding: 5px 5px; /* Adjust padding values to reduce size */
+  font-size: 14px; /* Adjust font size */
+  background-color: #093c9381; /* Custom background color */
+  color: white; /* Text color */
+}
+
+.custom-text1 {
+  font-size: 18px; /* Font size */
+  font-weight: bold; /* Bold text */
+  color: #000000; /* Text color */
+  text-align: center; /* Center alignment */
+}
+
+.custom-icon {
+  font-size: 35px; /* Icon size */
+  transform: translateX(10px); /* Translation to the right */
+}
+
+.pagination-container {
+  position: absolute;
+  bottom: 20px; /* Adjust vertical position as needed */
+  left: 50%; /* Center horizontally */
+  transform: translateX(-50%); /* Center horizontally */
+}
+
+

@@ -12,7 +12,7 @@ export class ListpdfComponentComponent {
   
     openDialog(enterAnimationDuration: string, exitAnimationDuration: string, fileType: string): void {
       this.dialog.open(DialogContentComponent, {
-        width: '650px',
+        width: '1000px',
         enterAnimationDuration,
         exitAnimationDuration,
         data: { fileType }

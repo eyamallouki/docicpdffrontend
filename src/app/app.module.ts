@@ -10,20 +10,19 @@ import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { AuthInterceptor } from './interceptors/AuthInterceptor';
-import { AdminPdfModule } from './admin-pdf/admin-pdf.module';
+
 import { NgxPaginationModule } from 'ngx-pagination';
 import { MatIconModule } from '@angular/material/icon';
 
 import { ToastrModule } from 'ngx-toastr';
 import { NgxFileDropModule } from 'ngx-file-drop';
 import { MatDialogModule } from '@angular/material/dialog';
-
-import { PatientPdfModule } from './patient-pdf/patient-pdf.module';
 import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
-import { NgImageSliderModule } from 'ng-image-slider';
 
-
-
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { PatientPdfModule } from './patient-pdf/patient-pdf.module';
+import { NgxDocViewerModule } from 'ngx-doc-viewer';
+import { AdminPdfModule } from './admin-pdf/admin-pdf.module';
 
 
 @NgModule({
@@ -35,10 +34,11 @@ import { NgImageSliderModule } from 'ng-image-slider';
   imports: [
     BrowserModule,
     AppRoutingModule,
-    NgImageSliderModule,
     RouterModule,
     HttpClientModule,
     UserManagementModule,
+    MatPaginatorModule,
+    NgxDocViewerModule,
     NgxExtendedPdfViewerModule,
     AdminPdfModule,
     MatSnackBarModule,
@@ -51,7 +51,8 @@ import { NgImageSliderModule } from 'ng-image-slider';
     ToastrModule.forRoot(), 
     PatientPdfModule,
     BrowserAnimationsModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    NgxDocViewerModule
   ],
   providers: [{ provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }],
   bootstrap: [AppComponent]

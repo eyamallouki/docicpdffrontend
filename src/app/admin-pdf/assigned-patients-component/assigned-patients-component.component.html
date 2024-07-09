@@ -7,170 +7,167 @@
   <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
   <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
   <style>
-   .custom-text {
-  color: rgb(240, 229, 233); 
-  font-family: blood;
-}
-.custom-btn {
-    padding: 5px 5px; /* Ajustez les valeurs de rembourrage pour réduire la taille */
-    font-size: 14px; /* Ajustez la taille de la police */
-}
-
-.custom-btn {
-  background-color: #093c9381; /* Couleur personnalisée de votre choix */
-  color: white; /* Couleur du texte */
-}
-.custom-text1 {
-  font-size: 18px; /* Taille de la police */
-  font-weight: bold; /* Gras */
-  color: #000000; /* Couleur du texte */
-  text-align: center; /* Alignement du texte au centre */
-  /* Autres styles personnalisés si nécessaire */
-}
-.custom-icon {
-  font-size: 35px; /* Taille de l'icône */
-  transform: translateX(10px); /* Translation vers la droite */
-}
-.pagination-container {
-  position: absolute;
-  bottom: 20px; /* Ajustez la position verticale selon vos besoins */
-  left: 50%; /* Centrez horizontalement */
-  transform: translateX(-50%); /* Centrez horizontalement */
-}
-
-
+    .custom-text {
+      color: rgb(240, 229, 233); 
+      font-family: blood;
+    }
+    .custom-btn {
+      padding: 5px 5px; /* Ajustez les valeurs de rembourrage pour réduire la taille */
+      font-size: 14px; /* Ajustez la taille de la police */
+      background-color: #093c9381; /* Couleur personnalisée de votre choix */
+      color: white; /* Couleur du texte */
+    }
+    .custom-text1 {
+      font-size: 18px; /* Taille de la police */
+      font-weight: bold; /* Gras */
+      color: #000000; /* Couleur du texte */
+      text-align: center; /* Alignement du texte au centre */
+    }
+    .custom-icon {
+      font-size: 35px; /* Taille de l'icône */
+      transform: translateX(10px); /* Translation vers la droite */
+    }
+    .pagination-container {
+      position: absolute;
+      bottom: 20px; /* Ajustez la position verticale selon vos besoins */
+      left: 50%; /* Centrez horizontalement */
+      transform: translateX(-50%); /* Centrez horizontalement */
+    }
   </style>
 </head>
 <body>
   <div class="sidebar">
-      <div class="logo-details">
-          <i class="bx bxl-c-plus-plus icon"></i>
-          <div class="logo_name">CodingLab</div>
-          <i class="bx bx-menu" id="btn"></i>
-      </div>
-      <ul class="nav-list">
-          <li>
-              <a [routerLink]="['/admin-dashboard']">
-                  <i class="bx bx-grid-alt"></i>
-                  <span class="links_name">Home</span>
-              </a>
-              <span class="tooltip">Home</span>
-          </li>
-          <li>
-              <a [routerLink]="['/assigned-patients']">
-                  <i class="bx bx-user"></i>
-                  <span class="links_name">Patient List</span>
-              </a>
-              <span class="tooltip">Patient List</span>
-          </li>
-          <li>
-              <a href="#">
-                  <i class="bx bx-pie-chart-alt-2"></i>
-                  <span class="links_name">Files</span>
-              </a>
-              <span class="tooltip">Files</span>
-          </li>
-          <li>
-              <a href="#">
-                  <i class="bx bx-cog"></i>
-                  <span class="links_name">Setting</span>
-              </a>
-              <span class="tooltip">Setting</span>
-          </li>
-          <li>
-              <a href="#">
-                  <i class="bx bx-log-out" id="log_out"></i>
-                  <span class="links_name">LogOut</span>
-              </a>
-              <span class="tooltip">LogOut</span>
-          </li>
-      </ul>
+    <div class="logo-details">
+      <i class="bx bxl-c-plus-plus icon"></i>
+      <div class="logo_name">CodingLab</div>
+      <i class="bx bx-menu" id="btn"></i>
+    </div>
+    <ul class="nav-list">
+      <li>
+        <a [routerLink]="['/admin-dashboard']">
+          <i class="bx bx-grid-alt"></i>
+          <span class="links_name">Home</span>
+        </a>
+        <span class="tooltip">Home</span>
+      </li>
+      <li>
+        <a [routerLink]="['/assigned-patients']">
+          <i class="bx bx-user"></i>
+          <span class="links_name">Patient List</span>
+        </a>
+        <span class="tooltip">Patient List</span>
+      </li>
+      <li>
+        <a href="#">
+          <i class="bx bx-pie-chart-alt-2"></i>
+          <span class="links_name">Files</span>
+        </a>
+        <span class="tooltip">Files</span>
+      </li>
+      <li>
+        <a href="#">
+          <i class="bx bx-cog"></i>
+          <span class="links_name">Setting</span>
+        </a>
+        <span class="tooltip">Setting</span>
+      </li>
+      <li>
+        <a href="#">
+          <i class="bx bx-log-out" id="log_out"></i>
+          <span class="links_name">LogOut</span>
+        </a>
+        <span class="tooltip">LogOut</span>
+      </li>
+    </ul>
   </div>
   <section class="home-section">
     <div class="background-image"></div>
-      <div class="container mt-6">
-        <div class="row justify-content-center">
-          <div class="col-md-6">
-            <form *ngIf="assignForm" [formGroup]="assignForm" (ngSubmit)="assignUser()">
-              <div class="form-group row align-items-center" *ngIf="patients.length > 0">
-                <label for="patient" class="col-sm-7 col-form-label">
-                  <span class="text-nowrap custom-text">Select patient :</span>
-                </label>
-                <div class="col-sm-5">
-                  <select class="form-control" formControlName="selectedPatientId" id="patient">
-                    <option *ngFor="let patient of patients" [value]="patient.id">{{ patient.username }}</option>
-                  </select>
-                </div>
-                <button type="submit" class="btn custom-btn">
-                  <i class="fas fa-user-plus"></i> 
-                </button>
+    <div class="container mt-6">
+      <div class="row justify-content-center">
+        <div class="col-md-6">
+          <form *ngIf="assignForm" [formGroup]="assignForm" (ngSubmit)="assignUser()">
+            <div class="form-group row align-items-center" *ngIf="patients.length > 0">
+              <label for="patient" class="col-sm-7 col-form-label">
+                <span class="text-nowrap custom-text">Select patient :</span>
+              </label>
+              <div class="col-sm-5">
+                <select class="form-control" formControlName="selectedPatientId" id="patient">
+                  <option *ngFor="let patient of patients" [value]="patient.id">{{ patient.username }}</option>
+                </select>
               </div>
-              <p class="custom-text1">
-                  Patients list
-                <i class="fas fa-lightbulb custom-icon" style="color: rgb(246, 199, 12);"></i>
-              </p>
-            </form>
-          </div>
+              <button type="submit" class="btn custom-btn">
+                <i class="fas fa-user-plus"></i> 
+              </button>
+            </div>
+            <p class="custom-text1">
+              Patients list
+              <i class="fas fa-lightbulb custom-icon" style="color: rgb(246, 199, 12);"></i>
+            </p>
+          </form>
         </div>
       </div>
-      <div class="container">
-        <div *ngFor="let patient of patients | paginate: { itemsPerPage: 2, currentPage: currentPage, id: 'patientsPagination' }" class="cards">
-          <div class="frame">
-            <div class="center">
-              <div class="profile">
-                <div class="image">
-                  <div class="circle-1"></div>
-                  <div class="circle-2"></div>
-                  <img src="https://static.vecteezy.com/system/resources/previews/000/362/094/non_2x/add-user-vector-icon.jpg" width="70" height="70" alt="Person">
-                </div>
-                <div class="name">{{ patient.username }}</div>
-                <div class="job">Email: {{ patient.email }}</div>
-                <div class="actions">
-                  <button class="btn">  View Files  <i class="fas fa-eye" style="color: green"></i> </button>
-                  <button class="btn">Delete  <i class="fas fa-trash-alt" style="color: rgb(158, 23, 23)"></i></button>
-                </div>
+    </div>
+    <div class="container">
+      <div *ngFor="let patient of paginatedPatients" class="cards">
+        <div class="frame">
+          <div class="center">
+            <div class="profile">
+              <div class="image">
+                <div class="circle-1"></div>
+                <div class="circle-2"></div>
+                <img src="https://static.vecteezy.com/system/resources/previews/000/362/094/non_2x/add-user-vector-icon.jpg" width="70" height="70" alt="Person">
               </div>
-              <div class="stats">
-                <div class="box">
-                  <span class="value">Username</span>
-                  <span class="parameter">{{ patient.username }}</span>
-                </div>
-                <div class="box">
-                  <span class="value">Email</span>
-                  <span class="parameter">{{ patient.email }}</span>
-                </div>
-                <div class="box">
-                  <span class="value">Activation</span>
-                  <span class="parameter">{{ patient.is_active }}</span>
-                </div>
+              <div class="name">{{ patient.username }}</div>
+              <div class="job">Email: {{ patient.email }}</div>
+              <div class="actions">
+                <button class="btn" [routerLink]="['/viewfile', patient.id]">
+                  View Files
+                  <i class="fas fa-eye" style="color: green"></i>
+               <i class="fas fa-eye" style="color: green"></i> </button>
+                <button class="btn">Delete  <i class="fas fa-trash-alt" style="color: rgb(158, 23, 23)"></i></button>
+              </div>
+            </div>
+            <div class="stats">
+              <div class="box">
+                <span class="value">Username</span>
+                <span class="parameter">{{ patient.username }}</span>
+              </div>
+              <div class="box">
+                <span class="value">Email</span>
+                <span class="parameter">{{ patient.email }}</span>
+              </div>
+              <div class="box">
+                <span class="value">Activation</span>
+                <span class="parameter">{{ patient.is_active }}</span>
               </div>
             </div>
           </div>
         </div>
-        <div class="pagination-container">
-          <pagination-controls (pageChange)="onPageChange($event)" id="patientsPagination"></pagination-controls>
-        </div>
       </div>
-      <ng-template #noPatients>
-          <p>Aucun patient assigné trouvé.</p>
-      </ng-template>
+      <div class="pagination-container">
+        <mat-paginator [length]="patients.length" [pageSize]="pageSize" (page)="onPageChange($event)">
+        </mat-paginator>
+      </div>
+    </div>
+    <ng-template #noPatients>
+      <p>Aucun patient assigné trouvé.</p>
+    </ng-template>
   </section>
   <script>
-    
-      let sidebar = document.querySelector(".sidebar");
-      let closeBtn = document.querySelector("#btn");
-  
-      closeBtn.addEventListener("click", () => {
-          sidebar.classList.toggle("open");
-          menuBtnChange();
-      });
-  
-      function menuBtnChange() {
-          if (sidebar.classList.contains("open")) {
-              closeBtn.classList.replace("bx-menu", "bx-menu-alt-right");
-          } else {
-              closeBtn.classList.replace("bx-menu-alt-right", "bx-menu");
-          }
+    let sidebar = document.querySelector(".sidebar");
+    let closeBtn = document.querySelector("#btn");
+
+    closeBtn.addEventListener("click", () => {
+      sidebar.classList.toggle("open");
+      menuBtnChange();
+    });
+
+    function menuBtnChange() {
+      if (sidebar.classList.contains("open")) {
+        closeBtn.classList.replace("bx-menu", "bx-menu-alt-right");
+      } else {
+        closeBtn.classList.replace("bx-menu-alt-right", "bx-menu");
       }
+    }
   </script>
 </body>
