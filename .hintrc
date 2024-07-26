@@ -6,14 +6,16 @@
     "axe/forms": [
       "default",
       {
-        "label": "off"
+        "label": "off",
+        "select-name": "off"
       }
     ],
     "axe/text-alternatives": [
       "default",
       {
         "image-alt": "off",
-        "frame-title": "off"
+        "frame-title": "off",
+        "document-title": "off"
       }
     ],
     "no-inline-styles": "off",

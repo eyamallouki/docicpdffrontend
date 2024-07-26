@@ -23,6 +23,9 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { PatientPdfModule } from './patient-pdf/patient-pdf.module';
 import { NgxDocViewerModule } from 'ngx-doc-viewer';
 import { AdminPdfModule } from './admin-pdf/admin-pdf.module';
+import { MatButtonModule } from '@angular/material/button';
+import { MatMenuModule } from '@angular/material/menu';
+
 
 
 @NgModule({
@@ -41,6 +44,10 @@ import { AdminPdfModule } from './admin-pdf/admin-pdf.module';
     NgxDocViewerModule,
     NgxExtendedPdfViewerModule,
     AdminPdfModule,
+    MatDialogModule,
+    MatButtonModule,
+    MatIconModule,
+    MatMenuModule,
     MatSnackBarModule,
     NgxPaginationModule ,
     MatIconModule,

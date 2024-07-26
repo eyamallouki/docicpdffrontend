@@ -13,7 +13,6 @@ export class UserserviceService {
   private tokenKey = 'jwt_token';
   private userRoleKey = 'userRole';
   private token: string | null = null;
-  
 
   constructor(private http: HttpClient) {}
 
@@ -29,8 +28,8 @@ export class UserserviceService {
     return this.http.post<any>(`${this.apiUrl}/login/`, credentials).pipe(
       tap(response => {
         if (response.access) {
-          this.storeToken(response.access); // Stocker le token d'accès
-          this.setUserRole(response.role); // Stocker le rôle de l'utilisateur
+          this.storeToken(response.access);
+          this.setUserRole(response.role);
         }
       })
     );
@@ -108,12 +107,12 @@ export class UserserviceService {
 
   setToken(token: string): void {
     this.token = token;
-    localStorage.setItem('token', token); // Sauvegarder dans localStorage pour persistance
+    localStorage.setItem(this.tokenKey, token); 
   }
 
   getToken(): string | null {
     if (!this.token) {
-      this.token = localStorage.getItem('token'); // Récupérer depuis localStorage si nécessaire
+      this.token = localStorage.getItem(this.tokenKey);
     }
     return this.token;
   }
@@ -124,8 +123,6 @@ export class UserserviceService {
       return null;
     }
 
-    
-
     try {
       const decodedToken: any = jwtDecode(token);
       return decodedToken.user_id || null;
@@ -134,6 +131,7 @@ export class UserserviceService {
       return null;
     }
   }
+
   getAllPatients(): Observable<any> {
     return this.http.get(`${this.apiUrl}/all-patients/`);
   }
@@ -141,5 +139,7 @@ export class UserserviceService {
   assignUser(patientId: number, data: any): Observable<any> {
     return this.http.patch(`${this.apiUrl}/assign-patient/${patientId}/`, data);
   }
-  
+  isAuthenticated(): boolean {
+    return !!this.getToken();
+  }
 }

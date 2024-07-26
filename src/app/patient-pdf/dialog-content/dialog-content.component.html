@@ -33,7 +33,7 @@
         <button (click)="closePdfViewer()">Close</button>
         <ngx-extended-pdf-viewer
           *ngIf="pdfViewerVisible && selectedPdfUrl"
-          [src]="selectedPdfUrl ?? ''"
+          [src]="selectedPdfUrl"
           useBrowserLocale="true"
           height="80vh"
           (error)="onPdfLoadError($event)"

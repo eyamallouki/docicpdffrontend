@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { UserserviceService } from 'src/app/user-management/service/userservice.service';
 
 @Injectable({
   providedIn: 'root'
@@ -11,37 +10,58 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 export class AdmineserviceService {
   private baseUrl = 'http://localhost:8000/pdf';
 
-  constructor(private http: HttpClient, private sanitizer: DomSanitizer) {}
+  constructor(private http: HttpClient, private sanitizer: DomSanitizer, private userService: UserserviceService) {}
+
+  getAuthHeaders(): HttpHeaders {
+    const token = this.userService.getToken();
+    return new HttpHeaders().set('Authorization', `Bearer ${token}`);
+  }
 
   getPatientFiles(patientId: number): Observable<any> {
-    return this.http.get(`${this.baseUrl}/patient/${patientId}/files/`);
+    return this.http.get(`${this.baseUrl}/patient/${patientId}/files/`, { headers: this.getAuthHeaders() });
   }
 
   getPdfUrl(filename: string): string {
-    // Vérifier et supprimer les parties incorrectes de l'URL
     if (filename.startsWith('http://localhost:8000/media/pdfs/')) {
       filename = filename.replace('http://localhost:8000/media/pdfs/', '');
     }
     return `http://localhost:8000/pdf/media/pdfs/${filename}`;
   }
-  
-  
-  
-  
-  
-getPdfImages(fileId: number): Observable<any> {
-  console.log('Fetching images for PDF ID:', fileId);  // Log the pdfId
-  return this.http.get<any>(`${this.baseUrl}/pdf/${fileId}/images/`);
-}
 
+  getPdfImages(fileId: number): Observable<any> {
+    console.log('Fetching images for PDF ID:', fileId);
+    return this.http.get<any>(`${this.baseUrl}/pdf/${fileId}/images/`, { headers: this.getAuthHeaders() });
+  }
 
-sanitizeUrl(url: string): SafeResourceUrl {
-  return this.sanitizer.bypassSecurityTrustResourceUrl(url);
-}
+  sanitizeUrl(url: string): SafeResourceUrl {
+    return this.sanitizer.bypassSecurityTrustResourceUrl(url);
+  }
 
-deleteFile(id: number, token: string): Observable<any> {
-  const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
-  return this.http.delete(`${this.baseUrl}/delete/${id}/`, { headers });
-}
+  deleteFile(id: number): Observable<any> {
+    return this.http.delete(`${this.baseUrl}/er/${id}/`, { headers: this.getAuthHeaders() });
+  }
 
+  addNewPage(pdfId: number, newPageFile: File): Observable<any> {
+    const formData: FormData = new FormData();
+    formData.append('new_page', newPageFile, newPageFile.name);
+    return this.http.post(`${this.baseUrl}/${pdfId}/add-page/`, formData, { headers: this.getAuthHeaders() });
+  }
+
+  extractPages(pdfId: number, pages: number[]): Observable<any> {
+    return this.http.post(`${this.baseUrl}/${pdfId}/extract-pages/`, { pages_to_extract: pages }, { headers: this.getAuthHeaders() });
+  }
+
+  importDocument(pdfId: number, document: File): Observable<any> {
+    const formData: FormData = new FormData();
+    formData.append('document', document, document.name);
+    return this.http.post(`${this.baseUrl}/${pdfId}/import-document/`, formData, { headers: this.getAuthHeaders() });
+  }
+
+  movePage(pdfId: number, pageNumber: number, newPosition: number): Observable<any> {
+    return this.http.post(`${this.baseUrl}/${pdfId}/move-page/`, { page_number: pageNumber, new_position: newPosition }, { headers: this.getAuthHeaders() });
+  }
+
+  rotatePages(pdfId: number, pages: number[], rotationAngle: number): Observable<any> {
+    return this.http.post(`${this.baseUrl}/${pdfId}/rotate-pages/`, { pages_to_rotate: pages, rotation_angle: rotationAngle }, { headers: this.getAuthHeaders() });
+  }
 }

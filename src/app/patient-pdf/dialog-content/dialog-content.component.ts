@@ -4,10 +4,9 @@ import { DomSanitizer, SafeResourceUrl, SafeUrl } from '@angular/platform-browse
 import { ToastrService } from 'ngx-toastr';
 import { UserserviceService } from 'src/app/user-management/service/userservice.service';
 import { PatientserviceService } from '../service/patientservice.service';
-import { PDFDocument, rgb } from 'pdf-lib';
+import { PDFDocument } from 'pdf-lib';
 import { HttpClient } from '@angular/common/http';
 import * as docx from 'docx-preview';
-
 
 @Component({
   selector: 'app-dialog-content',
@@ -16,7 +15,7 @@ import * as docx from 'docx-preview';
 })
 export class DialogContentComponent implements OnInit {
   @ViewChild('docxViewer', { static: false }) docxViewer!: ElementRef;
-   pdfFiles: any[] = [];
+  pdfFiles: any[] = [];
   txtFiles: any[] = [];
   jpgFiles: any[] = [];
   pngFiles: any[] = [];
@@ -50,7 +49,6 @@ export class DialogContentComponent implements OnInit {
     private sanitizer: DomSanitizer,
     private toastr: ToastrService,
     private http: HttpClient,
-    
   ) {}
 
   ngOnInit() {
@@ -72,13 +70,13 @@ export class DialogContentComponent implements OnInit {
       console.error('Error: Token not found');
     }
   }
+
   viewPdf(filename: string): void {
     const fileUrl = this.fileService.getPdfUrl(filename);
     console.log('Generated PDF URL:', fileUrl); // Log the generated URL
     this.selectedPdfUrl = fileUrl;
     this.pdfViewerVisible = true; // Activer la visibilité du viewer
     this.isSignatureMode = false; // Assurez-vous que le mode signature est désactivé lors de la visualisation du PDF
-  
   }
 
   closePdfViewer(): void {
@@ -86,12 +84,10 @@ export class DialogContentComponent implements OnInit {
     this.selectedPdfUrl = null;
   }
 
- 
-
   onPdfLoadError(error: any): void {
     console.error('Error loading PDF:', error);
     this.toastr.error('Error loading PDF');
-  } 
+  }
 
   onPageChange(event: number): void {
     this.p = event; // Assign the new page number
@@ -165,10 +161,9 @@ export class DialogContentComponent implements OnInit {
     }
   }
 
-
   sanitizeUrl(url: string): SafeUrl {
     return this.sanitizer.bypassSecurityTrustUrl(url);
-  } 
+  }
 
   viewDocxFile(filename: string): void {
     const docxUrl = this.getDocxUrl(filename);
@@ -201,13 +196,8 @@ export class DialogContentComponent implements OnInit {
       }
     );
   }
-  
-  getDocxUrl(filename: string): string {
-    return `http://localhost:8000/pdf/media/pdfs/${filename}`;
-  }
-  
-  
- 
 
-  
+  getDocxUrl(filename: string): string {
+    return `http://localhost:8000/media/pdfs/${filename}`;
+  }  
 }

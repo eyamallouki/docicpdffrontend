@@ -334,10 +334,10 @@ body {
   
   
   .container {
-    max-width: 1300px;
+    max-width: 900px;
     margin: 20px auto;
     padding: 20px;
-    background-color: #fff;
+    background-color: #ffffff0b;
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   }
@@ -415,7 +415,7 @@ body {
   .icon-button, .icon-buttonp, .icon-link, .icon-linkp {
     background: none;
     border: none;
-    color: #92037f;
+    color: #c02b35;
     cursor: pointer;
     font-size: 18px;
     padding: 10px;
@@ -596,5 +596,180 @@ body {
 .file-viewer button:hover {
   background-color: #d32f2f;
 }
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgb(0,0,0);
+  background-color: rgba(0,0,0,0.4);
+  padding-top: 60px;
+}
 
-  
+.modal-content {
+  background-color: #fefefe;
+  margin: 5% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+}
+
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+.confirm-button {
+  color: white;
+  background-color: #73afe4; /* Vert pour "Confirm" */
+}
+
+.cancel-button {
+  color: white;
+  background-color: #e87537; /* Rouge pour "Cancel" */
+}
+
+.mat-dialog-title mat-icon {
+  margin-right: 8px;
+  /* Espace entre l'icône et le texte du titre */
+}
+
+.mat-dialog-actions mat-icon {
+  margin-right: 4px; /* Espace entre l'icône et le texte du bouton */
+}
+
+
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+h2 {
+  margin-top: 0;
+  font-size: 1.5em;
+}
+
+label {
+  display: block;
+  margin: 10px 0 5px;
+}
+
+input,
+select {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #121212;
+  border-radius: 4px;
+}
+
+/* Nouveau conteneur pour les groupes de boutons */
+.button-group {
+  display: flex;
+  gap: 10px; /* Espacement entre les boutons dans chaque groupe */
+  margin-bottom: 10px; /* Espacement entre les groupes de boutons */
+}
+
+/* Nouveau conteneur pour les boutons alignés côte à côte */
+.button-container {
+  display: flex;
+  flex-wrap: wrap; /* Permet au conteneur de se réajuster sur plusieurs lignes si nécessaire */
+  gap: 10px; /* Espacement entre les groupes de boutons */
+}
+
+/* Style pour les boutons eux-mêmes */
+.icon-button {
+  background-color: #eff0f400; /* Couleur de fond des boutons */
+  border: none;
+  color: #276ee9;
+  padding: 10px 15px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 4px;
+  flex: 1 1 48%; /* Permet aux boutons de se redimensionner pour s'ajuster dans le conteneur */
+}
+
+/* Ajustement des marges des boutons dans le conteneur */
+.icon-button + .icon-button {
+  margin-left: 10px; /* Espace entre les boutons dans le même groupe */
+}
+
+.icon-button i {
+  margin-right: 8px;
+}
+
+.icon-button:hover {
+  background-color: #131b8ba2; /* Couleur de fond au survol */
+}
+
+
+.icon-button i {
+  margin-right: 8px;
+}
+
+.icon-button:hover {
+  background-color: #131b8ba2;
+}
+
+.close-viewer {
+  background-color: #f44336; /* Red */
+  border: none;
+  color: rgb(15, 15, 15);
+  padding: 10px 15px;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 4px;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+.close-viewer:hover {
+  background-color: #e53935;
+}
+
+.file-viewer {
+  position: relative;
+  padding: 20px;
+}
+
+.modal-button {
+  background-color: #131b8ba2; /* Green */
+  border: none;
+  color: rgb(20, 19, 19);
+  padding: 10px 15px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 5px;
+  cursor: pointer;
+  border-radius: 4px;
+  gap: 10px; /* Espacement entre les boutons */
+  margin-bottom: 10px;
+}
+
+.modal-button i {
+  margin-right: 8px;
+}
+
+.modal-button:hover {
+  background-color: #f9fcfc8f;
+}

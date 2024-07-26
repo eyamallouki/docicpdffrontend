@@ -17,7 +17,10 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { ToastrModule } from 'ngx-toastr';
 import { MatIconModule } from '@angular/material/icon';
 import { AppRoutingModule } from '../app-routing.module';
-
+import { MatMenuModule } from '@angular/material/menu';
+import { MatButtonModule } from '@angular/material/button';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
 @NgModule({
   declarations: [
     AdminPdfComponentComponent,
@@ -29,6 +32,12 @@ import { AppRoutingModule } from '../app-routing.module';
     RouterModule,
     ReactiveFormsModule,
     MatPaginatorModule,
+    MatDialogModule,
+    MatButtonModule,
+    MatIconModule,
+    MatMenuModule,
+    MatInputModule,
+    MatSelectModule,
     FormsModule,
     NgxExtendedPdfViewerModule,
     NgxFileDropModule,
@@ -39,6 +48,7 @@ import { AppRoutingModule } from '../app-routing.module';
     MatDialogModule,
     AppRoutingModule,
     NgxDocViewerModule,
+    MatMenuModule,
     MatIconModule,
     BrowserAnimationsModule, 
     ToastrModule.forRoot(), 
