@@ -23,12 +23,14 @@ export class ViewfilesComponent implements OnInit {
   txtFiles: any[] = [];
   jpgFiles: any[] = [];
   pngFiles: any[] = [];
+  pages: number[] = [];
   p: number = 1;
-  pageIndex = 0;
+  pageIndex = 1;
   pageSize = 3;
-  length = 3;
+  selectedFile: any;
 
   @ViewChild('dialogTemplate') dialogTemplate!: TemplateRef<any>;
+  @ViewChild('actionDialogTemplate') actionDialogTemplate!: TemplateRef<any>;
 
   constructor(
     private adminService: AdmineserviceService,
@@ -56,21 +58,26 @@ export class ViewfilesComponent implements OnInit {
     );
   }
 
-  viewPdf(filename: string): void {
-    this.selectedPdfUrl = this.adminService.getPdfUrl(filename);
-    this.pdfViewerVisible = true;
+  viewPdf(file: any): void {
+    this.selectedFile = file;
+    this.selectedPdfUrl = this.adminService.getPdfUrl(file.file);
     if (this.selectedPdfUrl) {
-      console.log('Selected PDF URL:', this.selectedPdfUrl);
+      this.openModal1();
     }
   }
 
-  closePdfViewer(): void {
-    this.pdfViewerVisible = false;
-    this.selectedPdfUrl = null;
+  openModal1(): void {
+    this.dialog.open(this.dialogTemplate, {
+      width: '100vw',
+      height: '100vh',
+      maxWidth: '100vw',
+      maxHeight: '100vh',
+      panelClass: 'full-screen-modal'
+    });
   }
 
-  onPdfLoadError(error: any): void {
-    console.error('PDF Load Error:', error);
+  closeModal1(): void {
+    this.dialog.closeAll();
   }
 
   deletePdf(id: number): void {
@@ -94,9 +101,12 @@ export class ViewfilesComponent implements OnInit {
 
   openModal(action: string, file: any): void {
     this.modalAction = action;
+    this.selectedFile = file; // Set the selected file
     this.selectedPdfId = file.id;
     this.modalData = {}; // Clear modal data
-    this.dialog.open(this.dialogTemplate);
+    this.dialog.open(this.actionDialogTemplate, {
+      width: '500px'
+    });
   }
 
   closeModal(): void {
@@ -199,6 +209,5 @@ export class ViewfilesComponent implements OnInit {
   onPageChange(event: PageEvent): void {
     this.pageIndex = event.pageIndex;
     this.pageSize = event.pageSize;
-    // Use pageIndex or pageSize as needed
   }
 }

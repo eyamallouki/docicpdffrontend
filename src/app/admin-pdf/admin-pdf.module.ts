@@ -21,6 +21,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
+import { DragDropModule } from '@angular/cdk/drag-drop';
 @NgModule({
   declarations: [
     AdminPdfComponentComponent,
@@ -33,6 +34,7 @@ import { MatSelectModule } from '@angular/material/select';
     ReactiveFormsModule,
     MatPaginatorModule,
     MatDialogModule,
+    DragDropModule,
     MatButtonModule,
     MatIconModule,
     MatMenuModule,

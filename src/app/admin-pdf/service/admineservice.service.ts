@@ -10,7 +10,11 @@ import { UserserviceService } from 'src/app/user-management/service/userservice.
 export class AdmineserviceService {
   private baseUrl = 'http://localhost:8000/pdf';
 
-  constructor(private http: HttpClient, private sanitizer: DomSanitizer, private userService: UserserviceService) {}
+  constructor(
+    private http: HttpClient,
+    private sanitizer: DomSanitizer,
+    private userService: UserserviceService
+  ) {}
 
   getAuthHeaders(): HttpHeaders {
     const token = this.userService.getToken();
@@ -29,7 +33,6 @@ export class AdmineserviceService {
   }
 
   getPdfImages(fileId: number): Observable<any> {
-    console.log('Fetching images for PDF ID:', fileId);
     return this.http.get<any>(`${this.baseUrl}/pdf/${fileId}/images/`, { headers: this.getAuthHeaders() });
   }
 
@@ -64,4 +67,13 @@ export class AdmineserviceService {
   rotatePages(pdfId: number, pages: number[], rotationAngle: number): Observable<any> {
     return this.http.post(`${this.baseUrl}/${pdfId}/rotate-pages/`, { pages_to_rotate: pages, rotation_angle: rotationAngle }, { headers: this.getAuthHeaders() });
   }
+
+  updatePageOrder(pdfId: number, pageOrder: number[]): Observable<any> {
+    return this.http.post(`${this.baseUrl}/${pdfId}/update-page-order/`, { page_order: pageOrder }, { headers: this.getAuthHeaders() });
+  } 
+
+  duplicatePage(pdfId: number, pageNumber: number): Observable<any> {
+    return this.http.post(`${this.baseUrl}/${pdfId}/duplicate-page/`, { page_number: pageNumber }, { headers: this.getAuthHeaders() });
+  }
+  
 }
