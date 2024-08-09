@@ -157,7 +157,9 @@
             </ngx-extended-pdf-viewer>
           </div>
         </ng-template>
-        
+        <div *ngIf="isLoading" class="spinner-container">
+          <div class="spinner"></div>
+        </div>
         <ng-template #actionDialogTemplate>
           <div class="modal-backdrop">
             <div class="modal-content">
@@ -166,10 +168,6 @@
                 <button class="close-button" (click)="closeModal()">
                   <i class="fas fa-times"></i>
                 </button>
-              </div>
-              <div class="modal-body" *ngIf="modalAction === 'addPage'">
-                <label>Select a new page to add:</label>
-                <input type="file" id="newPageFile" accept="application/pdf">
               </div>
               
               <!-- Section pour le réarrangement des pages -->
@@ -184,17 +182,33 @@
                 </div>
               </div>
               
-              <div class="modal-body" *ngIf="modalAction === 'extractPages' || modalAction === 'rotatePages'">
-                <label>Pages (comma-separated):</label>
-                <input type="text" [(ngModel)]="modalData.pages" placeholder="Enter page numbers" />
-                <div *ngIf="modalAction === 'rotatePages'">
-                  <label>Direction:</label>
-                  <select [(ngModel)]="modalData.direction">
-                    <option value="right">Right</option>
-                    <option value="left">Left</option>
-                  </select>
+              <!-- Section pour l'extraction des pages -->
+              <div class="modal-body" *ngIf="modalAction === 'extractPages'">
+                <label>Select pages to extract:</label>
+                <div class="page-selection-container">
+                  <div *ngFor="let page of pdfPages" class="page-selection-item">
+                    <input type="checkbox" [(ngModel)]="page.selected"> Page {{ page.pageNumber }}
+                    <img [src]="page.thumbnail" alt="PDF Page" class="pdf-page-thumbnail">
+                  </div>
                 </div>
               </div>
+              
+              <!-- Section pour la rotation des pages -->
+              <div class="modal-body" *ngIf="modalAction === 'rotatePages'">
+                <label>Select pages to rotate:</label>
+                <div class="page-selection-container">
+                  <div *ngFor="let page of pdfPages" class="page-selection-item">
+                    <input type="checkbox" [(ngModel)]="page.selected"> Page {{ page.pageNumber }}
+                    <img [src]="page.thumbnail" alt="PDF Page" class="pdf-page-thumbnail">
+                  </div>
+                </div>
+                <label>Direction:</label>
+                <select [(ngModel)]="modalData.direction">
+                  <option value="right">Right</option>
+                  <option value="left">Left</option>
+                </select>
+              </div>
+              
               <div class="modal-footer">
                 <button mat-button class="confirm-button" (click)="confirmAction()">
                   <mat-icon>check</mat-icon> Confirm
@@ -206,6 +220,7 @@
             </div>
           </div>
         </ng-template>
+        
         
         
         

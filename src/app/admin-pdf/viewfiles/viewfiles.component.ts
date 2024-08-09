@@ -29,6 +29,7 @@ export class ViewfilesComponent implements OnInit {
   pageSize = 3;
   selectedFile: any;
   pdfPages: any[] = [];
+  isLoading = false; // Ajoutez cette propriété
 
   @ViewChild('dialogTemplate') dialogTemplate!: TemplateRef<any>;
   @ViewChild('actionDialogTemplate') actionDialogTemplate!: TemplateRef<any>;
@@ -101,15 +102,22 @@ export class ViewfilesComponent implements OnInit {
   }
 
   openModal(action: string, file: any): void {
+    this.isLoading = true; // Démarrer le spinner immédiatement
     this.modalAction = action;
-    this.selectedFile = file; // Set the selected file
+    this.selectedFile = file; // Définir le fichier sélectionné
     this.selectedPdfId = file.id;
-    this.modalData = {}; // Clear modal data
-    this.loadPdfPages(file.file); // Load PDF pages for drag-and-drop
+    this.modalData = {}; // Effacer les données du modal
+  
+    this.loadPdfPages(file.file); // Charger les pages PDF pour le drag-and-drop
+  
+    // Une fois que les pages sont chargées, ouvrez le modal
     this.dialog.open(this.actionDialogTemplate, {
       width: '500px'
+    }).afterOpened().subscribe(() => {
+      this.isLoading = false; // Masquer le spinner après l'ouverture du modal
     });
   }
+  
 
   closeModal(): void {
     this.dialog.closeAll();
@@ -119,13 +127,6 @@ export class ViewfilesComponent implements OnInit {
   }
 
   confirmAction(): void {
-    const { pages, direction } = this.modalData;
-
-    if (this.modalAction === 'extractPages' || this.modalAction === 'rotatePages') {
-      const pageArray = (typeof pages === 'string') ? pages.split(',').map(Number) : pages;
-      this.modalData.pages = pageArray;
-    }
-
     switch (this.modalAction) {
       case 'addPage':
         const newPageInput = document.getElementById('newPageFile') as HTMLInputElement;
@@ -137,21 +138,31 @@ export class ViewfilesComponent implements OnInit {
         }
         break;
       case 'extractPages':
-        this.extractPages(this.selectedPdfId!, this.modalData.pages);
+        const selectedPages = this.pdfPages.filter(page => page.selected).map(page => page.pageNumber);
+        if (selectedPages.length > 0) {
+          this.extractPages(this.selectedPdfId!, selectedPages);
+        } else {
+          this.toastr.error('Please select at least one page to extract');
+        }
+        break;
+      case 'rotatePages':
+        const rotationPages = this.pdfPages.filter(page => page.selected).map(page => page.pageNumber);
+        if (rotationPages.length > 0) {
+          const rotationAngle = this.modalData.direction === 'right' ? 90 : -90;
+          this.rotatePages(this.selectedPdfId!, rotationPages, rotationAngle);
+        } else {
+          this.toastr.error('Please select at least one page to rotate');
+        }
         break;
       case 'movePage':
         this.updatePageOrder(this.selectedPdfId!, this.pdfPages.map(page => page.pageNumber));
-        break;
-      case 'rotatePages':
-        const rotationAngle = direction === 'right' ? 90 : -90;
-        this.rotatePages(this.selectedPdfId!, this.modalData.pages, rotationAngle);
         break;
       default:
         break;
     }
     this.closeModal();
   }
-
+  
   
 
   addNewPage(pdfId: number, newPageFile: File): void {
@@ -212,35 +223,38 @@ export class ViewfilesComponent implements OnInit {
   }
 
   loadPdfPages(pdfFile: string): void {
+    this.isLoading = true; // Démarrer le spinner
     this.adminService.getPdfPages(this.selectedPdfId!).subscribe(
       (pages: any[]) => {
         this.pdfPages = pages.map(page => ({
           thumbnail: this.sanitizer.bypassSecurityTrustUrl(page.thumbnail),
           pageNumber: page.page_number
         }));
+        this.isLoading = false; // Arrêter le spinner
       },
       (error) => {
         console.error('Error loading PDF pages:', error);
         this.toastr.error('Error loading PDF pages');
+        this.isLoading = false; // Arrêter le spinner même en cas d'erreur
       }
     );
   }
   
   updatePageOrder(pdfId: number, pageOrder: number[]): void {
+    this.isLoading = true; // Démarrer le spinner
     this.adminService.updatePageOrder(pdfId, pageOrder).subscribe(
       (response) => {
         this.toastr.success('Page order updated successfully');
-        // Mettez à jour l'URL du PDF pour refléter les changements
         this.selectedPdfUrl = this.adminService.getPdfUrl(response.file_url);
-        //this.viewPdf({ file: response.file_url });
+        this.isLoading = false; // Arrêter le spinner
       },
       (error) => {
         console.error('Error updating page order:', error);
         this.toastr.error('Error updating page order');
+        this.isLoading = false; // Arrêter le spinner même en cas d'erreur
       }
     );
   }
-  
   
   drop(event: CdkDragDrop<string[]>): void {
     moveItemInArray(this.pdfPages, event.previousIndex, event.currentIndex);
