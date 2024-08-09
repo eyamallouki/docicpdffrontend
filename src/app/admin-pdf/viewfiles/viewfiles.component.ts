@@ -5,6 +5,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { ToastrService } from 'ngx-toastr';
 import { MatDialog } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
+import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'app-viewfiles',
@@ -13,7 +14,6 @@ import { PageEvent } from '@angular/material/paginator';
 })
 export class ViewfilesComponent implements OnInit {
   patientId: number;
-
   pdfFiles: any[] = [];
   selectedPdfUrl: string | null = null;
   pdfViewerVisible: boolean = false;
@@ -28,6 +28,7 @@ export class ViewfilesComponent implements OnInit {
   pageIndex = 1;
   pageSize = 3;
   selectedFile: any;
+  pdfPages: any[] = [];
 
   @ViewChild('dialogTemplate') dialogTemplate!: TemplateRef<any>;
   @ViewChild('actionDialogTemplate') actionDialogTemplate!: TemplateRef<any>;
@@ -104,6 +105,7 @@ export class ViewfilesComponent implements OnInit {
     this.selectedFile = file; // Set the selected file
     this.selectedPdfId = file.id;
     this.modalData = {}; // Clear modal data
+    this.loadPdfPages(file.file); // Load PDF pages for drag-and-drop
     this.dialog.open(this.actionDialogTemplate, {
       width: '500px'
     });
@@ -117,7 +119,7 @@ export class ViewfilesComponent implements OnInit {
   }
 
   confirmAction(): void {
-    const { pageNumber, newPosition, pages, direction } = this.modalData;
+    const { pages, direction } = this.modalData;
 
     if (this.modalAction === 'extractPages' || this.modalAction === 'rotatePages') {
       const pageArray = (typeof pages === 'string') ? pages.split(',').map(Number) : pages;
@@ -138,11 +140,7 @@ export class ViewfilesComponent implements OnInit {
         this.extractPages(this.selectedPdfId!, this.modalData.pages);
         break;
       case 'movePage':
-        if (pageNumber !== null && newPosition !== null) {
-          this.movePage(this.selectedPdfId!, pageNumber, newPosition);
-        } else {
-          this.toastr.error('Please specify the page number and new position');
-        }
+        this.updatePageOrder(this.selectedPdfId!, this.pdfPages.map(page => page.pageNumber));
         break;
       case 'rotatePages':
         const rotationAngle = direction === 'right' ? 90 : -90;
@@ -153,6 +151,8 @@ export class ViewfilesComponent implements OnInit {
     }
     this.closeModal();
   }
+
+  
 
   addNewPage(pdfId: number, newPageFile: File): void {
     this.adminService.addNewPage(pdfId, newPageFile).subscribe(
@@ -210,4 +210,41 @@ export class ViewfilesComponent implements OnInit {
     this.pageIndex = event.pageIndex;
     this.pageSize = event.pageSize;
   }
+
+  loadPdfPages(pdfFile: string): void {
+    this.adminService.getPdfPages(this.selectedPdfId!).subscribe(
+      (pages: any[]) => {
+        this.pdfPages = pages.map(page => ({
+          thumbnail: this.sanitizer.bypassSecurityTrustUrl(page.thumbnail),
+          pageNumber: page.page_number
+        }));
+      },
+      (error) => {
+        console.error('Error loading PDF pages:', error);
+        this.toastr.error('Error loading PDF pages');
+      }
+    );
+  }
+  
+  updatePageOrder(pdfId: number, pageOrder: number[]): void {
+    this.adminService.updatePageOrder(pdfId, pageOrder).subscribe(
+      (response) => {
+        this.toastr.success('Page order updated successfully');
+        // Mettez à jour l'URL du PDF pour refléter les changements
+        this.selectedPdfUrl = this.adminService.getPdfUrl(response.file_url);
+        //this.viewPdf({ file: response.file_url });
+      },
+      (error) => {
+        console.error('Error updating page order:', error);
+        this.toastr.error('Error updating page order');
+      }
+    );
+  }
+  
+  
+  drop(event: CdkDragDrop<string[]>): void {
+    moveItemInArray(this.pdfPages, event.previousIndex, event.currentIndex);
+    this.updatePageOrder(this.selectedPdfId!, this.pdfPages.map(page => page.pageNumber));
+  }
+  
 }

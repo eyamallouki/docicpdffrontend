@@ -111,7 +111,6 @@
           </ul>
         </div>
       
-        <!-- Modal Template for PDF Viewer -->
         <ng-template #dialogTemplate>
           <div class="pdf-viewer-container full-screen">
             <div class="modal-header">
@@ -158,9 +157,8 @@
             </ngx-extended-pdf-viewer>
           </div>
         </ng-template>
-      
-        <!-- Modal Template for Actions -->
-        <ng-template #actionDialogTemplate let-data="data">
+        
+        <ng-template #actionDialogTemplate>
           <div class="modal-backdrop">
             <div class="modal-content">
               <div class="modal-header">
@@ -173,12 +171,19 @@
                 <label>Select a new page to add:</label>
                 <input type="file" id="newPageFile" accept="application/pdf">
               </div>
+              
+              <!-- Section pour le réarrangement des pages -->
               <div class="modal-body" *ngIf="modalAction === 'movePage'">
-                <label>Page Number:</label>
-                <input type="number" [(ngModel)]="modalData.pageNumber" placeholder="Enter page number" />
-                <label>New Position:</label>
-                <input type="number" [(ngModel)]="modalData.newPosition" placeholder="Enter new position" />
+                <div cdkDropListGroup class="page-container">
+                  <div cdkDropList (cdkDropListDropped)="drop($event)" class="page-drop-list">
+                    <div *ngFor="let page of pdfPages" cdkDrag class="page-drag-item">
+                      <img [src]="page.thumbnail" alt="PDF Page" class="pdf-page-thumbnail">
+                      <p>Page {{ page.pageNumber }}</p>
+                    </div>
+                  </div>
+                </div>
               </div>
+              
               <div class="modal-body" *ngIf="modalAction === 'extractPages' || modalAction === 'rotatePages'">
                 <label>Pages (comma-separated):</label>
                 <input type="text" [(ngModel)]="modalData.pages" placeholder="Enter page numbers" />
@@ -201,14 +206,11 @@
             </div>
           </div>
         </ng-template>
-            
-            
-            
-
-
-
-      
-    
+        
+        
+        
+        
+        
         <br>
               <!-- TXT Files Section -->
               <div class="pdf-icon-container">
@@ -300,5 +302,4 @@
           </div>
  
     </section>
-
 

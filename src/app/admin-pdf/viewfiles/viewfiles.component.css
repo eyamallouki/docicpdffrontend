@@ -904,3 +904,54 @@ select {
   padding: 10px;
   cursor: pointer;
 }
+/* Conteneur principal des pages */
+.page-container {
+  display: flex;
+  flex-wrap: wrap;
+  overflow: auto;
+  padding: 10px;
+  max-height: 600px; /* Ajustez cette valeur selon vos besoins */
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+}
+
+/* Zone où les éléments peuvent être déposés */
+.page-drop-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px; /* Espacement entre les éléments */
+}
+
+/* Style des éléments draggables */
+.page-drag-item {
+  width: 150px; /* Augmente la taille des miniatures */
+  cursor: grab;
+  text-align: center;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 5px;
+  box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+  transition: transform 0.2s;
+}
+
+.page-drag-item:active {
+  cursor: grabbing;
+  transform: scale(1.05);
+}
+
+/* Style des miniatures */
+.pdf-page-thumbnail {
+  width: 100%;
+  height: auto;
+  border-bottom: 1px solid #ddd;
+  margin-bottom: 5px;
+}
+
+/* Ajustement de la modal pour s'adapter à la nouvelle taille */
+.modal-body {
+  overflow: auto;
+  padding: 20px;
+}
+

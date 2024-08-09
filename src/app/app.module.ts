@@ -26,6 +26,7 @@ import { NgxDocViewerModule } from 'ngx-doc-viewer';
 import { MatButtonModule } from '@angular/material/button';
 import { MatMenuModule } from '@angular/material/menu';
 import { AdminPdfModule } from './admin-pdf/admin-pdf.module';
+import { DragDropModule } from '@angular/cdk/drag-drop';
 
 
 
@@ -40,10 +41,12 @@ import { AdminPdfModule } from './admin-pdf/admin-pdf.module';
     AppRoutingModule,
     RouterModule,
     HttpClientModule,
+    DragDropModule,
     UserManagementModule,
     MatPaginatorModule,
     NgxDocViewerModule,
     NgxExtendedPdfViewerModule,
+    DragDropModule,
     AdminPdfModule,
     MatDialogModule,
     MatButtonModule,

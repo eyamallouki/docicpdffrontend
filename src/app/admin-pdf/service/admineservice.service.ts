@@ -68,12 +68,20 @@ export class AdmineserviceService {
     return this.http.post(`${this.baseUrl}/${pdfId}/rotate-pages/`, { pages_to_rotate: pages, rotation_angle: rotationAngle }, { headers: this.getAuthHeaders() });
   }
 
-  updatePageOrder(pdfId: number, pageOrder: number[]): Observable<any> {
-    return this.http.post(`${this.baseUrl}/${pdfId}/update-page-order/`, { page_order: pageOrder }, { headers: this.getAuthHeaders() });
-  } 
+ 
 
   duplicatePage(pdfId: number, pageNumber: number): Observable<any> {
     return this.http.post(`${this.baseUrl}/${pdfId}/duplicate-page/`, { page_number: pageNumber }, { headers: this.getAuthHeaders() });
+  }
+  
+  updatePageOrder(pdfId: number, pageOrder: number[]): Observable<any> {
+    return this.http.post(`${this.baseUrl}/pdf/${pdfId}/update-page-order/`, { new_order: pageOrder }, { headers: this.getAuthHeaders() });
+  }
+  
+  
+
+  getPdfPages(pdfId: number): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/pdf/${pdfId}/pages/`, { headers: this.getAuthHeaders() });
   }
   
 }
