@@ -202,10 +202,11 @@
                     <img [src]="page.thumbnail" alt="PDF Page" class="pdf-page-thumbnail">
                   </div>
                 </div>
-                <label>Direction:</label>
-                <select [(ngModel)]="modalData.direction">
-                  <option value="right">Right</option>
-                  <option value="left">Left</option>
+                <label>Rotation angle:</label>
+                <select [(ngModel)]="modalData.rotationAngle">
+                  <option value="90">90° Right</option>
+                  <option value="-90">90° Left</option>
+                  <option value="180">180°</option>
                 </select>
               </div>
               

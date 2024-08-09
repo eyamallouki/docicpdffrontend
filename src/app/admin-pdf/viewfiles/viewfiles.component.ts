@@ -148,7 +148,7 @@ export class ViewfilesComponent implements OnInit {
       case 'rotatePages':
         const rotationPages = this.pdfPages.filter(page => page.selected).map(page => page.pageNumber);
         if (rotationPages.length > 0) {
-          const rotationAngle = this.modalData.direction === 'right' ? 90 : -90;
+          const rotationAngle = this.modalData.rotationAngle;
           this.rotatePages(this.selectedPdfId!, rotationPages, rotationAngle);
         } else {
           this.toastr.error('Please select at least one page to rotate');
@@ -162,6 +162,8 @@ export class ViewfilesComponent implements OnInit {
     }
     this.closeModal();
   }
+  
+  
   
   
 
