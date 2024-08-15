@@ -83,5 +83,8 @@ export class AdmineserviceService {
   getPdfPages(pdfId: number): Observable<any> {
     return this.http.get<any>(`${this.baseUrl}/pdf/${pdfId}/pages/`, { headers: this.getAuthHeaders() });
   }
-  
+  getImage(fileName: string): Observable<Blob> {
+    // Construisez l'URL sans répéter `/media/pdfs/`
+    return this.http.get(`${this.baseUrl}/media/pdfs/${fileName}`, { responseType: 'blob' });
+  }
 }

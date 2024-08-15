@@ -22,11 +22,17 @@ export class PatientserviceService {
   } 
 
 
-  getFiles(token: string): Observable<any> {
+  getFile(token: string): Observable<any> {
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`
     });
     return this.http.get(`${this.baseUrl}/affichefile/`, { headers });
+  }
+ 
+
+  getImage(fileName: string): Observable<Blob> {
+    // Construisez l'URL sans répéter `/media/pdfs/`
+    return this.http.get(`${this.baseUrl}/media/pdfs/${fileName}`, { responseType: 'blob' });
   }
   
 

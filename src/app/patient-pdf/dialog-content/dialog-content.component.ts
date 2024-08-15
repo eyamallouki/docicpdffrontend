@@ -30,9 +30,9 @@ export class DialogContentComponent implements OnInit {
   modificationHistory: string[] = [];
   datas: any = { fileTypes: ['JPG', 'PNG'] };
   showImageSlider: boolean = false;
+  selectedImageUrl: SafeUrl | null = null;
   imageObject: Array<object> = [];
   images: SafeResourceUrl[] = [];
-
   imageSliderOptions = {
     imageSources: [] as string[], 
     slideInterval: 3000,
@@ -54,7 +54,7 @@ export class DialogContentComponent implements OnInit {
   ngOnInit() {
     const token = this.authService.getToken();
     if (token) {
-      this.fileService.getFiles(token).subscribe(
+      this.fileService.getFile(token).subscribe(
         (data: any) => {
           this.pdfFiles = data.pdf_files || [];
           this.txtFiles = data.txt_files || [];
@@ -200,4 +200,24 @@ export class DialogContentComponent implements OnInit {
   getDocxUrl(filename: string): string {
     return `http://localhost:8000/media/pdfs/${filename}`;
   }  
+
+  viewImage(fileName: string): void {
+    // Assurez-vous que `fileName` ne contient pas le préfixe '/media/pdfs/'
+    if (fileName.startsWith('/media/pdfs/')) {
+      fileName = fileName.replace('/media/pdfs/', '');
+    }
+  
+    this.fileService.getImage(fileName).subscribe(response => {
+      const objectURL = URL.createObjectURL(response);
+      this.selectedImageUrl = this.sanitizer.bypassSecurityTrustUrl(objectURL);
+    }, error => {
+      console.error('Error fetching image:', error);
+      this.toastr.error('Error fetching image');
+    });
+  }
+  
+
+  closeImageViewer(): void {
+    this.selectedImageUrl = null;
+  }
 }

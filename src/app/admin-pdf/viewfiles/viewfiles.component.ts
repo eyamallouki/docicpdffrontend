@@ -1,7 +1,7 @@
 import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { AdmineserviceService } from '../service/admineservice.service';
-import { DomSanitizer } from '@angular/platform-browser';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { ToastrService } from 'ngx-toastr';
 import { MatDialog } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
@@ -30,6 +30,7 @@ export class ViewfilesComponent implements OnInit {
   selectedFile: any;
   pdfPages: any[] = [];
   isLoading = false; // Ajoutez cette propriété
+  selectedImageUrl: SafeUrl | null = null;
 
   @ViewChild('dialogTemplate') dialogTemplate!: TemplateRef<any>;
   @ViewChild('actionDialogTemplate') actionDialogTemplate!: TemplateRef<any>;
@@ -148,7 +149,7 @@ export class ViewfilesComponent implements OnInit {
       case 'rotatePages':
         const rotationPages = this.pdfPages.filter(page => page.selected).map(page => page.pageNumber);
         if (rotationPages.length > 0) {
-          const rotationAngle = this.modalData.rotationAngle;
+          const rotationAngle = this.modalData.direction === 'right' ? 90 : -90;
           this.rotatePages(this.selectedPdfId!, rotationPages, rotationAngle);
         } else {
           this.toastr.error('Please select at least one page to rotate');
@@ -162,8 +163,6 @@ export class ViewfilesComponent implements OnInit {
     }
     this.closeModal();
   }
-  
-  
   
   
 
@@ -262,5 +261,26 @@ export class ViewfilesComponent implements OnInit {
     moveItemInArray(this.pdfPages, event.previousIndex, event.currentIndex);
     this.updatePageOrder(this.selectedPdfId!, this.pdfPages.map(page => page.pageNumber));
   }
+
+  viewImage(fileName: string): void {
+    // Assurez-vous que `fileName` ne contient pas le préfixe '/media/pdfs/'
+    if (fileName.startsWith('/media/pdfs/')) {
+      fileName = fileName.replace('/media/pdfs/', '');
+    }
   
+    this.adminService.getImage(fileName).subscribe(response => {
+      const objectURL = URL.createObjectURL(response);
+      this.selectedImageUrl = this.sanitizer.bypassSecurityTrustUrl(objectURL);
+    }, error => {
+      console.error('Error fetching image:', error);
+      this.toastr.error('Error fetching image');
+    });
+  }
+  
+
+  closeImageViewer(): void {
+    this.selectedImageUrl = null;
+  }
 }
+  
+  

@@ -100,9 +100,9 @@
           <div class="col col-3" data-label="Category">{{ file.categorie }}</div>
           <div class="col col-4" data-label="Status">{{ file.etat }}</div>
           <div class="col col-5" data-label="Actions">
-            <a class="icon-link" (click)="viewPdf(file.file)">
-              <i class="fas fa-eye"></i> View
-            </a>
+                  <button class="icon-button" (click)="viewImage(file.file)">
+                    <i class="fas fa-eye"></i> View
+                  </button>
             <button class="icon-buttonp" (click)="deletePdf(file.id)">
               <i class="fas fa-trash"></i> Delete
             </button>
@@ -110,6 +110,14 @@
         </li>
       </ul>
       <pagination-controls (pageChange)="onPageChange($event)" class="pagination"></pagination-controls>
+      <div *ngIf="selectedImageUrl" class="image-viewer-modal">
+        <div class="image-viewer-content">
+          <button class="close-button" (click)="closeImageViewer()">
+            <i class="fas fa-times"></i>
+          </button>
+          <img [src]="selectedImageUrl" class="full-view-image" alt="Selected Image">
+        </div>
+      </div>
     </div>
 
     <!-- PNG Files Section -->
@@ -132,9 +140,9 @@
           <div class="col col-3" data-label="Category">{{ file.categorie }}</div>
           <div class="col col-4" data-label="Status">{{ file.etat }}</div>
           <div class="col col-5" data-label="Actions">
-            <a class="icon-link" (click)="viewPdf(file.file)">
-              <i class="fas fa-eye"></i> View
-            </a>
+                  <button class="icon-button" (click)="viewImage(file.file)">
+                    <i class="fas fa-eye"></i> View
+                  </button>
             <button class="icon-buttonp" (click)="deletePdf(file.id)">
               <i class="fas fa-trash"></i> Delete
             </button>
@@ -143,5 +151,14 @@
       </ul>
       <pagination-controls (pageChange)="onPageChange($event)" class="pagination"></pagination-controls>
     </div>
+   <!-- Image Viewer Modal -->
+<div *ngIf="selectedImageUrl" class="image-viewer-modal">
+  <div class="image-viewer-content">
+    <button class="close-button" (click)="closeImageViewer()">
+      <i class="fas fa-times"></i>
+    </button>
+    <img [src]="selectedImageUrl" class="full-view-image" alt="Selected Image">
   </div>
 </div>
+    </div>
+  </div>
