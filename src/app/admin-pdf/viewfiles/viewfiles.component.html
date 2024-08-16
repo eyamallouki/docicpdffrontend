@@ -261,6 +261,7 @@
         </div>
         <br>
               <!-- JPG Files Section -->
+              <ul class="responsive-table">
               <div *ngIf="jpgFiles.length > 0" class="scrollable-table">
                 <li class="table-header jpg-header">
                   <div class="col col-1">Title</div>
@@ -285,6 +286,7 @@
                   </div>
                 </li>
               </div>
+              </ul>
             
         <br>
               <!-- PNG Files Section -->
@@ -292,6 +294,7 @@
                   <img class="pdf-icon" src="https://www.svgrepo.com/show/19982/jpg.svg" alt="PDF Icon" class="pdf-icon">
                 </div>
                 <br>
+              <ul class="responsive-table">
                 <div *ngIf="pngFiles.length > 0" class="scrollable-table">
                   <li class="table-header png-header">
                     <div class="col col-1">Title</div>
@@ -315,6 +318,7 @@
                       </button>
                     </div>
                   </li>
+                
                 </div>
                 
                 <!-- Image Viewer Modal -->
@@ -326,5 +330,6 @@
                     <img [src]="selectedImageUrl" class="full-view-image" alt="Selected Image">
                   </div>
                 </div>
-              </div>
+       </ul>
+       </div>       
     </section>

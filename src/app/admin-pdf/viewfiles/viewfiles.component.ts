@@ -1,9 +1,9 @@
-import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, Inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { AdmineserviceService } from '../service/admineservice.service';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { ToastrService } from 'ngx-toastr';
-import { MatDialog } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 
@@ -31,9 +31,14 @@ export class ViewfilesComponent implements OnInit {
   pdfPages: any[] = [];
   isLoading = false; // Ajoutez cette propriété
   selectedImageUrl: SafeUrl | null = null;
+  selectedDocxUrl: SafeUrl | null = null;
+
 
   @ViewChild('dialogTemplate') dialogTemplate!: TemplateRef<any>;
   @ViewChild('actionDialogTemplate') actionDialogTemplate!: TemplateRef<any>;
+  @ViewChild('imageModalTemplate') imageModalTemplate!: TemplateRef<any>;
+  @ViewChild('docxModalTemplate') docxModalTemplate!: TemplateRef<any>;
+
 
   constructor(
     private adminService: AdmineserviceService,
@@ -51,15 +56,19 @@ export class ViewfilesComponent implements OnInit {
 
   loadFiles(): void {
     this.adminService.getPatientFiles(this.patientId).subscribe(
-      (data: any) => {
-        this.pdfFiles = data.pdf_files || [];
-      },
-      (error) => {
-        console.error('Error loading files:', error);
-        this.toastr.error('Error loading files');
-      }
+        (data: any) => {
+            this.pdfFiles = data.pdf_files || [];
+            this.txtFiles = data.txt_files || []; 
+            this.jpgFiles = data.jpg_files || [];
+            this.pngFiles = data.png_files || [];
+        },
+        (error) => {
+            console.error('Error loading files:', error);
+            this.toastr.error('Error loading files');
+        }
     );
-  }
+}
+
 
   viewPdf(file: any): void {
     this.selectedFile = file;
@@ -263,17 +272,36 @@ export class ViewfilesComponent implements OnInit {
   }
 
   viewImage(fileName: string): void {
-    // Assurez-vous que `fileName` ne contient pas le préfixe '/media/pdfs/'
-    if (fileName.startsWith('/media/pdfs/')) {
-      fileName = fileName.replace('/media/pdfs/', '');
-    }
-  
     this.adminService.getImage(fileName).subscribe(response => {
       const objectURL = URL.createObjectURL(response);
       this.selectedImageUrl = this.sanitizer.bypassSecurityTrustUrl(objectURL);
+      this.dialog.open(this.imageModalTemplate, {
+        width: '80vw',
+        height: '80vh',
+        maxWidth: '80vw',
+        maxHeight: '80vh',
+        panelClass: 'full-screen-modal'
+      });
     }, error => {
       console.error('Error fetching image:', error);
       this.toastr.error('Error fetching image');
+    });
+  }
+
+  viewDocxFile(fileName: string): void {
+    this.adminService.getDocx(fileName).subscribe(response => {
+      const objectURL = URL.createObjectURL(response);
+      this.selectedDocxUrl = this.sanitizer.bypassSecurityTrustUrl(objectURL);
+      this.dialog.open(this.docxModalTemplate, {
+        width: '80vw',
+        height: '80vh',
+        maxWidth: '80vw',
+        maxHeight: '80vh',
+        panelClass: 'full-screen-modal'
+      });
+    }, error => {
+      console.error('Error fetching DOCX file:', error);
+      this.toastr.error('Error fetching DOCX file');
     });
   }
   

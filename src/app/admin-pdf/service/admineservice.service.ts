@@ -87,4 +87,10 @@ export class AdmineserviceService {
     // Construisez l'URL sans répéter `/media/pdfs/`
     return this.http.get(`${this.baseUrl}/media/pdfs/${fileName}`, { responseType: 'blob' });
   }
+
+
+
+  getDocx(fileName: string): Observable<Blob> {
+    return this.http.get(`${this.baseUrl}/media/pdfs/${fileName}`, { responseType: 'blob' });
+  }
 }
