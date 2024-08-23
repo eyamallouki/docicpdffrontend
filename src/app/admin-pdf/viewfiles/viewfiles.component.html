@@ -276,7 +276,6 @@
                   <div class="col col-3" data-label="Status">{{ file.etat }}</div>
                   <div class="col col-4" data-label="Modified Version">{{ file.date_modification }}</div>
                   <div class="col col-5" data-label="Actions">
-                    <img [src]="file.file" alt="{{ file.titre }}" class="image-thumbnail"/>
                     <button class="icon-button" (click)="viewImage(file.file)">
                       <i class="fas fa-eye"></i> View
                     </button>
@@ -309,7 +308,6 @@
                     <div class="col col-3" data-label="Status">{{ file.etat }}</div>
                     <div class="col col-4" data-label="Modified Version">{{ file.date_modification }}</div>
                     <div class="col col-5" data-label="Actions">
-                      <img [src]="file.file" alt="{{ file.titre }}" class="image-thumbnail"/>
                       <button class="icon-button" (click)="viewImage(file.file)">
                         <i class="fas fa-eye"></i> View
                       </button>

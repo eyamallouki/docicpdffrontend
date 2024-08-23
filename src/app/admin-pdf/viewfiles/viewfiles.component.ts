@@ -272,21 +272,38 @@ export class ViewfilesComponent implements OnInit {
   }
 
   viewImage(fileName: string): void {
-    this.adminService.getImage(fileName).subscribe(response => {
-      const objectURL = URL.createObjectURL(response);
-      this.selectedImageUrl = this.sanitizer.bypassSecurityTrustUrl(objectURL);
-      this.dialog.open(this.imageModalTemplate, {
-        width: '80vw',
-        height: '80vh',
-        maxWidth: '80vw',
-        maxHeight: '80vh',
-        panelClass: 'full-screen-modal'
-      });
-    }, error => {
-      console.error('Error fetching image:', error);
-      this.toastr.error('Error fetching image');
-    });
-  }
+    // Assurez-vous que le fileName n'est pas déjà une URL complète
+    if (!fileName.startsWith('http://') && !fileName.startsWith('https://')) {
+        // Si le fileName contient déjà le préfixe '/media/pdfs/', retirez-le
+        if (fileName.startsWith('/media/pdfs/')) {
+            fileName = fileName.replace('/media/pdfs/', '');
+        }
+        // Générer l'URL complète
+        const fileUrl = `http://localhost:8000/pdf/media/pdfs/${fileName}`;
+        this.adminService.getImage(fileUrl).subscribe(response => {
+            const objectURL = URL.createObjectURL(response);
+            this.selectedImageUrl = this.sanitizer.bypassSecurityTrustUrl(objectURL);
+            this.dialog.open(this.imageModalTemplate, {
+                width: '80vw',
+                height: '80vh',
+                maxWidth: '80vw',
+                maxHeight: '80vh',
+                panelClass: 'full-screen-modal'
+            });
+        }, error => {
+            console.error('Error fetching image:', error);
+            this.toastr.error('Error fetching image');
+        });
+    } else {
+        console.error('Invalid image URL');
+        this.toastr.error('Invalid image URL');
+    }
+}
+
+
+
+
+
 
   viewDocxFile(fileName: string): void {
     this.adminService.getDocx(fileName).subscribe(response => {

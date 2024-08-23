@@ -24,3 +24,25 @@
   position: absolute;
   clip: rect(10px, 150px, 130px, 10px);
 }
+/* src/app/components/uploadfilepatient/uploadfilepatient.component.css */
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.home-section {
+  padding: 20px;
+}
+
+.btn-primary, .btn-success {
+  margin-top: 20px;
+  display: block;
+  width: 100%;
+}
+
+iframe {
+  border: none;
+  margin-bottom: 20px;
+}

@@ -17,11 +17,11 @@ export class PatientserviceService {
   constructor(private http: HttpClient) { }
 
   uploadPdf(formData: FormData, token: string): Observable<any> {
-    const headers = { 'Authorization': `Bearer ${token}` };
+    const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` });
     return this.http.post(`${this.baseUrl}/upload/`, formData, { headers });
-  } 
+  }
 
-
+ 
   getFile(token: string): Observable<any> {
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`

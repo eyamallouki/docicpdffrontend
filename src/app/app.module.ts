@@ -20,13 +20,15 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
 
 import { MatPaginatorModule } from '@angular/material/paginator';
-import { PatientPdfModule } from './patient-pdf/patient-pdf.module';
+
 import { NgxDocViewerModule } from 'ngx-doc-viewer';
 
 import { MatButtonModule } from '@angular/material/button';
 import { MatMenuModule } from '@angular/material/menu';
 import { AdminPdfModule } from './admin-pdf/admin-pdf.module';
 import { DragDropModule } from '@angular/cdk/drag-drop';
+import { PatientPdfModule } from './patient-pdf/patient-pdf.module';
+
 
 
 

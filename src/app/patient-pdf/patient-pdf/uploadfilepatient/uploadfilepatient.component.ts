@@ -22,6 +22,7 @@ export class UploadfilepatientComponent implements OnInit {
   categorie: string = '';
   etat: string = 'non_traité';
   patientAssocie: number | null = null;
+  Pdf: any;
 
   constructor(
     private router: Router,
@@ -38,111 +39,85 @@ export class UploadfilepatientComponent implements OnInit {
     }
   }
 
-  public onFileDropped(files: NgxFileDropEntry[]) {
+  onFileDropped(files: NgxFileDropEntry[]) {
     for (const droppedFile of files) {
       if (droppedFile.fileEntry.isFile) {
         const fileEntry = droppedFile.fileEntry as FileSystemFileEntry;
         fileEntry.file((file: File) => {
           this.selectedFiles.push(file);
-          this.readFile(file);
-          this.getTotalPages(file);
+          this.previewFile(file);
         });
       }
     }
-  }
-
-  onDrop(event: DragEvent) {
-    event.preventDefault();
-    const files = event.dataTransfer?.files;
-    if (files && files.length > 0) {
-      for (const file of Array.from(files)) {
-        this.selectedFiles.push(file);
-        this.readFile(file);
-        this.getTotalPages(file);
-      }
-    }
-  }
-
-  onDragOver(event: DragEvent) {
-    event.preventDefault();
   }
 
   onFileSelected(event: any) {
     const files = event.target.files;
     for (const file of files) {
       this.selectedFiles.push(file);
-      this.readFile(file);
-      this.getTotalPages(file);
+      this.previewFile(file);
     }
   }
 
-  private readFile(file: File) {
+  previewFile(file: File) {
     const reader = new FileReader();
     reader.onload = (e) => {
-      const result = e.target?.result;
-      if (result) {
-        this.filePreviews.push(this.sanitizer.bypassSecurityTrustResourceUrl(result as string));
-      } else {
-        console.error('Erreur : e.target.result est null');
-      }
+      const dataUrl = reader.result;
+      this.filePreviews.push(this.sanitizer.bypassSecurityTrustResourceUrl(dataUrl as string));
     };
     reader.readAsDataURL(file);
   }
 
-  private getTotalPages(file: File) {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const result = e.target?.result;
-      if (result) {
-        const typedArray = new Uint8Array(result as ArrayBuffer);
-        pdfjsLib.getDocument(typedArray).promise.then((pdf) => {
-          this.totalPages += pdf.numPages;
-        }).catch(error => {
-          console.error('Erreur lors du chargement du PDF :', error);
-        });
-      } else {
-        console.error('Erreur : e.target.result est null');
-      }
-    };
-    reader.readAsArrayBuffer(file);
-  }
-
   onUpload() {
-    if (this.selectedFiles.length === 0) {
-      console.error('Aucun fichier sélectionné');
+    if (!this.selectedFiles.length) {
+      this.toastr.error('No files selected!');
       return;
     }
-
-    if (this.patientAssocie === null) {
-      console.error('patientAssocie est null');
-      return;
-    }
-
+  
+    const formData = new FormData();
+    this.selectedFiles.forEach((file) => {
+      formData.append('file', file, file.name);
+    });
+  
+    formData.append('titre', this.pdfTitle);
+    formData.append('total_pages', String(this.totalPages));
+    formData.append('categorie', this.categorie);
+    formData.append('etat', this.etat);
+    formData.append('patient_associé', String(this.patientAssocie));
+  
     const token = this.authService.getToken();
-
+  
     if (token) {
-      for (const file of this.selectedFiles) {
-        const formData = new FormData();
-        formData.append('titre', this.pdfTitle);
-        formData.append('file', file);
-        formData.append('total_pages', this.totalPages.toString());
-        formData.append('categorie', this.categorie);
-        formData.append('etat', this.etat);
-        formData.append('patient_associé', this.patientAssocie.toString());
-
-        this.pdfUploadService.uploadPdf(formData, token).subscribe(
-          () => {
-            this.toastr.success('Fichier uploadé avec succès');
-          },
-          error => {
-            this.toastr.error('Erreur lors de l\'upload du fichier');
-            console.error('Erreur lors de l\'upload du fichier :', error);
-          }
-        );
-      }
-      this.router.navigate(['/listpdf']);
+      this.pdfUploadService.uploadPdf(formData, token).subscribe({
+        next: (response) => {
+          this.toastr.success('File uploaded successfully!');
+          this.getPdfs(); // Refresh the list of PDFs after upload
+          this.router.navigate(['/listpdf']);
+        },
+        error: (error) => {
+          this.toastr.error('Failed to upload file.');
+          console.error('Upload error:', error);
+        }
+        
+      });
     } else {
-      console.error('Erreur : Token non trouvé');
+      this.toastr.error('Authentication token not found!');
+      console.error('Authentication token not found!');
     }
   }
+  getPdfs() {
+    const token = this.authService.getToken();
+    if (token) {
+      this.pdfUploadService.getFile(token).subscribe({
+        next: (response) => {
+          this.Pdf = response; // Assignez les PDFs reçus à une variable pour l'affichage
+        },
+        error: (error) => {
+          this.toastr.error('Failed to load PDFs.');
+          console.error('Error loading PDFs:', error);
+        }
+      });
+    }
+  }
+  
 }
