@@ -269,3 +269,16 @@ h2 {
   font-size: 24px;
   cursor: pointer;
 }
+.docx-viewer-container {
+  margin-top: 20px;
+  border: 1px solid #ccc;
+  padding: 10px;
+  height: 80vh;
+  overflow-y: auto;
+}
+
+.docx-container {
+  width: 100%;
+  height: 100%;
+}
+

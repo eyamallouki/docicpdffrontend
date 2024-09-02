@@ -99,6 +99,14 @@
                       <mat-icon>rotate_right</mat-icon>
                       <span>Rotate Pages</span>
                     </button>
+                    <button mat-menu-item (click)="resumerDocument(file.id)">
+                      <mat-icon>summarize</mat-icon>
+                      <span>Résumé</span>
+                    </button>
+                    <button mat-menu-item (click)="performOCR(file.id)">
+                      <mat-icon>text_snippet</mat-icon>
+                      <span>OCR</span>
+                    </button>
                     <button mat-menu-item (click)="deletePdf(file.id)">
                       <mat-icon>delete</mat-icon>
                       <span>Delete</span>
@@ -111,6 +119,7 @@
           </ul>
         </div>
       
+        <!-- Modal for PDF Viewer -->
         <ng-template #dialogTemplate>
           <div class="pdf-viewer-container full-screen">
             <div class="modal-header">
@@ -137,6 +146,14 @@
                   <mat-icon>rotate_right</mat-icon>
                   <span>Rotate Pages</span>
                 </button>
+                <button mat-menu-item (click)="resumerDocument(selectedFile.id)">
+                  <mat-icon>summarize</mat-icon>
+                  <span>Résumé</span>
+                </button>
+                <button mat-menu-item (click)="performOCR(selectedFile.id)">
+                  <mat-icon>text_snippet</mat-icon>
+                  <span>OCR</span>
+                </button>
                 <button mat-menu-item (click)="deletePdf(selectedFile.id)">
                   <mat-icon>delete</mat-icon>
                   <span>Delete</span>
@@ -157,9 +174,13 @@
             </ngx-extended-pdf-viewer>
           </div>
         </ng-template>
+        
+        <!-- Spinner for loading -->
         <div *ngIf="isLoading" class="spinner-container">
           <div class="spinner"></div>
         </div>
+        
+        <!-- Action Modal Template -->
         <ng-template #actionDialogTemplate>
           <div class="modal-backdrop">
             <div class="modal-content">
@@ -169,8 +190,8 @@
                   <i class="fas fa-times"></i>
                 </button>
               </div>
-              
-              <!-- Section pour le réarrangement des pages -->
+        
+              <!-- Section for page rearrangement -->
               <div class="modal-body" *ngIf="modalAction === 'movePage'">
                 <div cdkDropListGroup class="page-container">
                   <div cdkDropList (cdkDropListDropped)="drop($event)" class="page-drop-list">
@@ -181,8 +202,8 @@
                   </div>
                 </div>
               </div>
-              
-              <!-- Section pour l'extraction des pages -->
+        
+              <!-- Section for extracting pages -->
               <div class="modal-body" *ngIf="modalAction === 'extractPages'">
                 <label>Select pages to extract:</label>
                 <div class="page-selection-container">
@@ -192,8 +213,8 @@
                   </div>
                 </div>
               </div>
-              
-              <!-- Section pour la rotation des pages -->
+        
+              <!-- Section for rotating pages -->
               <div class="modal-body" *ngIf="modalAction === 'rotatePages'">
                 <label>Select pages to rotate:</label>
                 <div class="page-selection-container">
@@ -208,7 +229,7 @@
                   <option value="left">Left</option>
                 </select>
               </div>
-              
+        
               <div class="modal-footer">
                 <button mat-button class="confirm-button" (click)="confirmAction()">
                   <mat-icon>check</mat-icon> Confirm
@@ -221,41 +242,55 @@
           </div>
         </ng-template>
         
-        
-        
-        
-        
-        
-        <br>
-              <!-- TXT Files Section -->
-              <div class="pdf-icon-container">
-                  <img class="pdf-icon" src="https://www.svgrepo.com/show/90375/doc.svg" alt="PDF Icon" class="pdf-icon">
-                </div>
-                <br>
-              <div *ngIf="txtFiles.length > 0" class="scrollable-table">
-                <li class="table-header txt-header">
-                  <div class="col col-1">Title</div>
-                  <div class="col col-2">Category</div>
-                  <div class="col col-3">Status</div>
-                  <div class="col col-4">Modified Version</div>
-                  <div class="col col-5">Actions</div>
-                </li>
-                <li *ngFor="let file of txtFiles" class="table-row txt-row">
-                  <div class="col col-1" data-label="Title">{{ file.titre }}</div>
-                  <div class="col col-2" data-label="Category">{{ file.categorie }}</div>
-                  <div class="col col-3" data-label="Status">{{ file.etat }}</div>
-                  <div class="col col-4" data-label="Modified Version">{{ file.date_modification }}</div>
-                  <div class="col col-5" data-label="Actions">
-                    <button class="icon-button" (click)="viewPdf(file.file)">
-                      <i class="fas fa-eye"></i> View
-                    </button>
-                    <button class="icon-buttonp" (click)="deletePdf(file.id)">
-                      <i class="fas fa-trash"></i> Delete
-                    </button>
-                  </div>
-                </li>
+        <!-- Summary Modal Template (placed separately) -->
+        <ng-template #summaryModal>
+          <div class="modal-content">
+            <div class="modal-header" style="display: flex; justify-content: center; align-items: center; position: relative;">
+              <i class="fas fa-file-alt" style="color: #007bff; margin-right: 10px;"></i>
+              <h2 style="margin: 0;">Résumé du Document</h2>
+              <button class="close-button" (click)="closeModal1()" style="position: absolute; right: 10px;">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+            <div *ngIf="isLoading" class="modal-body" style="display: flex; justify-content: center; align-items: center;">
+              <mat-spinner diameter="50"></mat-spinner>
+            </div>
+            <div *ngIf="!isLoading" class="modal-body" style="max-height: 400px; overflow-y: auto;">
+              <div *ngFor="let paragraph of formattedSummary">
+                <p>{{ paragraph }}</p>
               </div>
-        <br>
+            </div>
+            <div class="modal-footer">
+              <button mat-button (click)="closeModal1()">Fermer</button>
+            </div>
+          </div>
+        </ng-template>
+        
+        <!-- OCR Modal Template -->
+        <ng-template #ocrModalTemplate>
+          <div class="modal-content full-screen">
+            <div class="modal-header">
+              <button class="close-button" (click)="closeModal()">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+            <div class="modal-body">
+              <div *ngIf="extractedImages.length > 0">
+                <div *ngFor="let image of extractedImages">
+                  <img [src]="image.image" (click)="selectImageForCropping(image)" alt="Extracted Image">
+                </div>
+              </div>
+              <div *ngIf="extractedImages.length === 0">
+                <p>No images extracted.</p>
+              </div>
+            </div>
+          </div>
+        </ng-template>
+        
+        
+
+        
+        
         <div class="pdf-icon-container">
           <img class="pdf-icon" src="https://www.svgrepo.com/show/19982/jpg.svg" alt="PDF Icon" class="pdf-icon">
         </div>
@@ -316,18 +351,21 @@
                       </button>
                     </div>
                   </li>
-                
                 </div>
-                
-                <!-- Image Viewer Modal -->
-                <div *ngIf="selectedImageUrl" class="image-viewer-modal">
-                  <div class="image-viewer-content">
-                    <button class="close-button" (click)="closeImageViewer()">
-                      <i class="fas fa-times"></i>
-                    </button>
-                    <img [src]="selectedImageUrl" class="full-view-image" alt="Selected Image">
-                  </div>
-                </div>
-       </ul>
-       </div>       
-    </section>
+              </ul>
+       </div>
+       <ng-template #imageModalTemplate>
+        <div class="modal-content full-screen">
+          <div class="modal-header">
+            <button class="close-button" (click)="closeModal()">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+          <div class="modal-body">
+            <img [src]="selectedImageUrl" class="full-view-image" alt="Selected Image">
+          </div>
+        </div>
+      </ng-template>
+      
+  </section>
+</body>

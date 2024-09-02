@@ -84,12 +84,33 @@ export class AdmineserviceService {
     return this.http.get<any>(`${this.baseUrl}/pdf/${pdfId}/pages/`, { headers: this.getAuthHeaders() });
   }
 
-
   getImage(fileUrl: string): Observable<Blob> {
-    return this.http.get(fileUrl, { responseType: 'blob' });
+    // Ensure no duplicate base URL or path segments in fileUrl
+    return this.http.get(`http://localhost:8000/pdf/${fileUrl}`, { responseType: 'blob' });
 }
 
-  
+
+
+
+
+
+
+
+resumer(command: string, rapportId: number): Observable<any> {
+  return this.http.post(`${this.baseUrl}/process/`, { command, rapport_id: rapportId });
+}
+
+performOCR(pdfId: number): Observable<any> {
+  return this.http.post(`${this.baseUrl}/ocr/${pdfId}/`, {});
+}
+
+cropImage(imageId: number, cropCoordinates: any): Observable<any> {
+  return this.http.post(`${this.baseUrl}/crop/${imageId}/`, { crop_coordinates: cropCoordinates });
+}
+
+getImageUrl(imageFileName: string): string {
+  return `${this.baseUrl}/media/extracted_images/${imageFileName}`;
+}
 
   getPdfUrl1(filename: string): string {
     if (filename.startsWith('/media/pdfs/')) {

@@ -19,3 +19,11 @@ describe('DialogContentComponent', () => {
     expect(component).toBeTruthy();
   });
 });
+
+function expect(component: DialogContentComponent) {
+  throw new Error('Function not implemented.');
+}
+function beforeEach(arg0: () => void) {
+  throw new Error('Function not implemented.');
+}
+

@@ -23,6 +23,10 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { ViewfilesComponent } from './viewfiles/viewfiles.component';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+
+
+
 @NgModule({
   declarations: [
     AdminPdfComponentComponent,
@@ -41,6 +45,7 @@ import { ViewfilesComponent } from './viewfiles/viewfiles.component';
     MatMenuModule,
     MatInputModule,
     MatSelectModule,
+    MatProgressSpinnerModule,
     FormsModule,
     NgxExtendedPdfViewerModule,
     NgxFileDropModule,

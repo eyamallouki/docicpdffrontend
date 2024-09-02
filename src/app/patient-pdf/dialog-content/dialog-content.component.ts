@@ -6,7 +6,6 @@ import { UserserviceService } from 'src/app/user-management/service/userservice.
 import { PatientserviceService } from '../service/patientservice.service';
 import { PDFDocument } from 'pdf-lib';
 import { HttpClient } from '@angular/common/http';
-import * as docx from 'docx-preview';
 
 @Component({
   selector: 'app-dialog-content',
@@ -14,7 +13,6 @@ import * as docx from 'docx-preview';
   styleUrls: ['./dialog-content.component.css']
 })
 export class DialogContentComponent implements OnInit {
-  @ViewChild('docxViewer', { static: false }) docxViewer!: ElementRef;
   pdfFiles: any[] = [];
   txtFiles: any[] = [];
   jpgFiles: any[] = [];
@@ -165,41 +163,6 @@ export class DialogContentComponent implements OnInit {
     return this.sanitizer.bypassSecurityTrustUrl(url);
   }
 
-  viewDocxFile(filename: string): void {
-    const docxUrl = this.getDocxUrl(filename);
-    this.http.get(docxUrl, { responseType: 'arraybuffer' }).subscribe(
-      (data: ArrayBuffer) => {
-        const container = this.docxViewer.nativeElement;
-        container.innerHTML = '';
-        docx.renderAsync(data, container, undefined, {
-          className: 'docx',
-          inWrapper: true,
-          ignoreWidth: false,
-          ignoreHeight: false,
-          ignoreFonts: false,
-          breakPages: true,
-          ignoreLastRenderedPageBreak: true,
-          experimental: false,
-          trimXmlDeclaration: true,
-          useBase64URL: false,
-          renderChanges: false,
-          renderHeaders: true,
-          renderFooters: true,
-          renderFootnotes: true,
-          renderEndnotes: true,
-          renderComments: false,
-          debug: false
-        });
-      },
-      error => {
-        console.error('Error fetching docx file:', error);
-      }
-    );
-  }
-
-  getDocxUrl(filename: string): string {
-    return `http://localhost:8000/media/pdfs/${filename}`;
-  }  
 
   viewImage(fileName: string): void {
     // Assurez-vous que `fileName` ne contient pas le préfixe '/media/pdfs/'

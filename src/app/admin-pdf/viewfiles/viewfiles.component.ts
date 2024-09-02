@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, Inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { AdmineserviceService } from '../service/admineservice.service';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
@@ -6,6 +6,9 @@ import { ToastrService } from 'ngx-toastr';
 import { MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'; 
+import { ImageCroppedEvent } from 'ngx-image-cropper';
+
 
 @Component({
   selector: 'app-viewfiles',
@@ -13,6 +16,7 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
   styleUrls: ['./viewfiles.component.css']
 })
 export class ViewfilesComponent implements OnInit {
+
   patientId: number;
   pdfFiles: any[] = [];
   selectedPdfUrl: string | null = null;
@@ -32,13 +36,27 @@ export class ViewfilesComponent implements OnInit {
   isLoading = false; // Ajoutez cette propriété
   selectedImageUrl: SafeUrl | null = null;
   selectedDocxUrl: SafeUrl | null = null;
-
-
+  @ViewChild('summaryModal') summaryModalTemplate!: TemplateRef<any>;  
+  @ViewChild('imageModalTemplate') imageModalTemplate!: TemplateRef<any>;
+  summary: string | null = null;
+  ocrText: string = '';  
+  ocrImages: string[] = []; 
   @ViewChild('dialogTemplate') dialogTemplate!: TemplateRef<any>;
   @ViewChild('actionDialogTemplate') actionDialogTemplate!: TemplateRef<any>;
-  @ViewChild('imageModalTemplate') imageModalTemplate!: TemplateRef<any>;
   @ViewChild('docxModalTemplate') docxModalTemplate!: TemplateRef<any>;
-
+  extractedImages: any[] = [];
+  selectedImage: any;
+  formattedSummary!: string[];
+  croppedImage: string | null = null;
+  @ViewChild('ocrModalTemplate') ocrModalTemplate!: TemplateRef<any>;
+  @ViewChild('imageCanvas', { static: true }) imageCanvas!: ElementRef<HTMLCanvasElement>;
+  private ctx!: CanvasRenderingContext2D;
+  private image = new Image();
+  private startX = 0;
+  private startY = 0;
+  private endX = 0;
+  private endY = 0;
+  
 
   constructor(
     private adminService: AdmineserviceService,
@@ -272,60 +290,190 @@ export class ViewfilesComponent implements OnInit {
   }
 
   viewImage(fileName: string): void {
-    // Assurez-vous que le fileName n'est pas déjà une URL complète
-    if (!fileName.startsWith('http://') && !fileName.startsWith('https://')) {
-        // Si le fileName contient déjà le préfixe '/media/pdfs/', retirez-le
-        if (fileName.startsWith('/media/pdfs/')) {
-            fileName = fileName.replace('/media/pdfs/', '');
-        }
-        // Générer l'URL complète
-        const fileUrl = `http://localhost:8000/pdf/media/pdfs/${fileName}`;
-        this.adminService.getImage(fileUrl).subscribe(response => {
-            const objectURL = URL.createObjectURL(response);
-            this.selectedImageUrl = this.sanitizer.bypassSecurityTrustUrl(objectURL);
-            this.dialog.open(this.imageModalTemplate, {
-                width: '80vw',
-                height: '80vh',
-                maxWidth: '80vw',
-                maxHeight: '80vh',
-                panelClass: 'full-screen-modal'
-            });
-        }, error => {
-            console.error('Error fetching image:', error);
-            this.toastr.error('Error fetching image');
-        });
-    } else {
-        console.error('Invalid image URL');
-        this.toastr.error('Invalid image URL');
+    // Ensure the fileName does not contain unnecessary prefixes
+    if (fileName.startsWith('/media/pdfs/')) {
+        fileName = fileName.replace('/media/pdfs/', '');
+    } else if (fileName.startsWith('http://localhost:8000/media/pdfs/')) {
+        fileName = fileName.replace('http://localhost:8000/media/pdfs/', '');
     }
+
+    // Call the getImage method with the correctly formatted file name
+    this.adminService.getImage(`media/pdfs/${fileName}`).subscribe(response => {
+        const objectURL = URL.createObjectURL(response);
+        this.selectedImageUrl = this.sanitizer.bypassSecurityTrustUrl(objectURL);
+        // Open the image modal after setting the URL
+        this.dialog.open(this.imageModalTemplate, {
+            width: '80vw',
+            height: '80vh',
+            maxWidth: '80vw',
+            maxHeight: '80vh',
+            panelClass: 'full-screen-modal'
+        });
+    }, error => {
+        console.error('Error fetching image:', error);
+        this.toastr.error('Error fetching image');
+    });
 }
 
 
 
 
 
-
-  viewDocxFile(fileName: string): void {
-    this.adminService.getDocx(fileName).subscribe(response => {
-      const objectURL = URL.createObjectURL(response);
-      this.selectedDocxUrl = this.sanitizer.bypassSecurityTrustUrl(objectURL);
-      this.dialog.open(this.docxModalTemplate, {
-        width: '80vw',
-        height: '80vh',
-        maxWidth: '80vw',
-        maxHeight: '80vh',
-        panelClass: 'full-screen-modal'
-      });
-    }, error => {
-      console.error('Error fetching DOCX file:', error);
-      this.toastr.error('Error fetching DOCX file');
+  
+  openImageModal(): void {
+    this.dialog.open(this.imageModalTemplate, {
+      width: '100vw',
+      height: '100vh',
+      maxWidth: '80vw',
+      maxHeight: '80vh',
+      panelClass: 'full-screen-modal'
     });
   }
+  
   
 
   closeImageViewer(): void {
     this.selectedImageUrl = null;
   }
+
+  resumerDocument(rapportId: number): void {
+    const command = 'résumé ce rapport';
+    this.isLoading = true;
+  
+    this.adminService.resumer(command, rapportId).subscribe(
+      (response) => {
+        this.summary = response.summary; 
+        if (this.summary) {
+          this.formattedSummary = this.formatSummary(this.summary);
+        } else {
+          this.formattedSummary = [];
+        }
+        this.isLoading = false;
+        this.openSummaryModal();
+      },
+      (error) => {
+        console.error('Erreur lors du résumé:', error);
+        this.toastr.error('Erreur lors du résumé du document');
+        this.isLoading = false;
+      }
+    );
+  }
+
+  // Format the summary into paragraphs
+  formatSummary(summary: string): string[] {
+    return summary.split('.').map(paragraph => paragraph.trim()).filter(paragraph => paragraph.length > 0);
+  }
+
+ 
+
+
+  // Méthode pour ouvrir un modal et afficher le résumé
+  openSummaryModal(): void {
+    if (!this.summaryModalTemplate) {
+      console.error('summaryModalTemplate is not defined');
+      return;
+    }
+  
+    this.dialog.open(this.summaryModalTemplate, {
+      width: '500px',
+      data: { summary: this.summary }
+    });
+  }
+
+ performOCR(pdfId: number): void {
+  this.adminService.performOCR(pdfId).subscribe(
+    (response: any) => {
+      console.log(response);  // Log the response to ensure it's correct
+      this.extractedImages = response;
+      this.dialog.open(this.ocrModalTemplate, {
+        width: '80vw',
+        height: '80vh',
+        panelClass: 'full-screen-modal'
+      });
+    },
+    error => {
+      this.toastr.error('Error performing OCR');
+      console.error('OCR Error:', error);
+    }
+  );
+}
+
+
+  ngAfterViewInit() {
+    this.ctx = this.imageCanvas.nativeElement.getContext('2d')!;
+  }
+
+  selectImageForCropping(image: any): void {
+    this.selectedImage = image;
+    this.image.src = image.image;  // Assuming image.image is the URL of the image
+    this.image.onload = () => {
+      this.imageCanvas.nativeElement.width = this.image.width;
+      this.imageCanvas.nativeElement.height = this.image.height;
+      this.ctx.drawImage(this.image, 0, 0);
+      this.initCrop();
+    };
+    this.dialog.open(this.imageModalTemplate, {
+      width: '80vw',
+      height: '80vh',
+      panelClass: 'full-screen-modal'
+    });
+  }
+
+  initCrop(): void {
+    this.imageCanvas.nativeElement.onmousedown = (e) => {
+      this.startX = e.offsetX;
+      this.startY = e.offsetY;
+    };
+
+    this.imageCanvas.nativeElement.onmousemove = (e) => {
+      if (e.buttons !== 1) return;
+      this.ctx.clearRect(0, 0, this.imageCanvas.nativeElement.width, this.imageCanvas.nativeElement.height);
+      this.ctx.drawImage(this.image, 0, 0);
+      this.ctx.strokeStyle = 'red';
+      this.ctx.lineWidth = 2;
+      this.endX = e.offsetX;
+      this.endY = e.offsetY;
+      this.ctx.strokeRect(this.startX, this.startY, this.endX - this.startX, this.endY - this.startY);
+    };
+  }
+
+  cropImage(): void {
+    const width = this.endX - this.startX;
+    const height = this.endY - this.startY;
+    const croppedImageCanvas = document.createElement('canvas');
+    croppedImageCanvas.width = width;
+    croppedImageCanvas.height = height;
+    const croppedCtx = croppedImageCanvas.getContext('2d')!;
+    croppedCtx.drawImage(this.image, this.startX, this.startY, width, height, 0, 0, width, height);
+    this.croppedImage = croppedImageCanvas.toDataURL('image/png');
+  }
+
+  saveCroppedImage(): void {
+    if (this.selectedImage && this.croppedImage) {
+      const cropCoordinates = {
+        x: this.startX,
+        y: this.startY,
+        width: this.endX - this.startX,
+        height: this.endY - this.startY
+      };
+
+      this.adminService.cropImage(this.selectedImage.id, cropCoordinates).subscribe(
+        () => {
+          this.toastr.success('Image cropped and saved successfully');
+          this.dialog.closeAll();
+        },
+        error => {
+          this.toastr.error('Error saving cropped image');
+          console.error('Crop Image Error:', error);
+        }
+      );
+    }
+  }
+
+  closeImageModal(): void {
+    this.dialog.closeAll();
+  }
+  
 }
   
   
