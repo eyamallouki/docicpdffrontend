@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { Observable, throwError } from 'rxjs';
+import { DomSanitizer, SafeResourceUrl, SafeUrl } from '@angular/platform-browser';
 import { UserserviceService } from 'src/app/user-management/service/userservice.service';
 
 @Injectable({
@@ -85,15 +85,13 @@ export class AdmineserviceService {
   }
 
   getImage(fileUrl: string): Observable<Blob> {
-    // Ensure no duplicate base URL or path segments in fileUrl
-    return this.http.get(`http://localhost:8000/pdf/${fileUrl}`, { responseType: 'blob' });
+    // Vérifier si fileUrl est déjà une URL complète
+    const imageUrl = fileUrl.startsWith('http://') || fileUrl.startsWith('https://')
+        ? fileUrl
+        : `http://localhost:8000${fileUrl}`;
+    
+    return this.http.get(imageUrl, { responseType: 'blob' });
 }
-
-
-
-
-
-
 
 
 resumer(command: string, rapportId: number): Observable<any> {
@@ -104,13 +102,29 @@ performOCR(pdfId: number): Observable<any> {
   return this.http.post(`${this.baseUrl}/ocr/${pdfId}/`, {});
 }
 
-cropImage(imageId: number, cropCoordinates: any): Observable<any> {
-  return this.http.post(`${this.baseUrl}/crop/${imageId}/`, { crop_coordinates: cropCoordinates });
+
+cropImage(imageId: number, cropCoordinates: any, croppedImage: string): Observable<any> {
+  const payload = {
+    crop_coordinates: cropCoordinates,
+    cropped_image: croppedImage
+  };
+  
+  return this.http.post(`${this.baseUrl}/pdf/crop/${imageId}/`, payload);
 }
 
+
+
 getImageUrl(imageFileName: string): string {
-  return `${this.baseUrl}/media/extracted_images/${imageFileName}`;
+  // Si l'URL commence déjà par 'http', ne la modifiez pas
+  return imageFileName.startsWith('http')
+    ? imageFileName
+    : `http://localhost:8000/pdf/media/extracted_images/${imageFileName}`;
 }
+
+
+
+
+
 
   getPdfUrl1(filename: string): string {
     if (filename.startsWith('/media/pdfs/')) {
@@ -120,6 +134,16 @@ getImageUrl(imageFileName: string): string {
     }
     return `http://localhost:8000/media/pdfs/${filename}`;
 }
+
+saveCroppedImage(imageId: number, cropCoordinates: any): Observable<any> {
+  const headers = this.getAuthHeaders();
+  const croppedImageData = {
+    crop_coordinates: cropCoordinates
+  };
+
+  return this.http.post<any>(`${this.baseUrl}/crop/${imageId}/`, croppedImageData, { headers });
+}
+
 
 
   getDocx(fileName: string): Observable<Blob> {

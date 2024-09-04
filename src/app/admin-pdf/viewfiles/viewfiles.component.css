@@ -616,8 +616,8 @@ h2 {
   border: 1px solid #888;
   border-radius: 8px;
   padding: 20px;
-  width: 500px;
-  max-width: 80%;
+  width: 300px;
+  max-width: 100%;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
@@ -885,6 +885,7 @@ select {
   max-height: 100vh;
   width: 100vw;
   height: 100vh;
+  z-index: 9999 !important;
 }
 
 .pdf-viewer-container {
@@ -1151,6 +1152,7 @@ select {
   max-height: 100vh;
   display: flex;
   flex-direction: column;
+  z-index: 9999 !important;
 }
 
 .modal-content {
@@ -1171,5 +1173,51 @@ select {
   max-height: 100%;
   object-fit: contain; /* Ensures the image scales while maintaining its aspect ratio */
 }
+.extracted-images-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+}
+
+.extracted-image-wrapper {
+  border: 1px solid #ccc;
+  padding: 5px;
+}
+
+.extracted-image {
+  max-width: 100%;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.extracted-image:hover {
+  transform: scale(1.05);
+}
 
 
+.extracted-image-wrapper img {
+  max-width: 300px;  /* Ajustez cette valeur selon la taille souhaitée */
+  max-height: 300px; /* Ajustez cette valeur selon la taille souhaitée */
+  margin: 5px;       /* Pour ajouter un espace entre les images */
+  border: 1px solid #ccc; /* Optionnel: Ajouter une bordure autour des images */
+}
+
+
+
+canvas {
+  max-width: 100%;
+  max-height: 70vh; /* Assurez-vous que le canvas ne dépasse pas la hauteur de la fenêtre */
+  margin: 0 auto;
+}
+
+
+
+.full-screen-modal {
+  z-index: 9999 !important; /* Priorité maximale pour que la modal soit bien au-dessus */
+}
+.modal-body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

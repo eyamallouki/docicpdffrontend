@@ -1,14 +1,13 @@
-import { Component, ElementRef, Inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { AdmineserviceService } from '../service/admineservice.service';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { ToastrService } from 'ngx-toastr';
-import { MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'; 
 import { ImageCroppedEvent } from 'ngx-image-cropper';
-
+import { ExtractedImage } from 'src/app/model/PDF';
 
 @Component({
   selector: 'app-viewfiles',
@@ -16,11 +15,10 @@ import { ImageCroppedEvent } from 'ngx-image-cropper';
   styleUrls: ['./viewfiles.component.css']
 })
 export class ViewfilesComponent implements OnInit {
-
   patientId: number;
   pdfFiles: any[] = [];
   selectedPdfUrl: string | null = null;
-  pdfViewerVisible: boolean = false;
+  pdfViewerVisible = false;
   modalAction: string = '';
   modalData: any = {};
   selectedPdfId: number | null = null;
@@ -28,18 +26,18 @@ export class ViewfilesComponent implements OnInit {
   jpgFiles: any[] = [];
   pngFiles: any[] = [];
   pages: number[] = [];
-  p: number = 1;
+  p = 1;
   pageIndex = 1;
   pageSize = 3;
   selectedFile: any;
   pdfPages: any[] = [];
-  isLoading = false; // Ajoutez cette propriété
+  isLoading = false;
   selectedImageUrl: SafeUrl | null = null;
   selectedDocxUrl: SafeUrl | null = null;
+  cropCoordinates: any = null;
   @ViewChild('summaryModal') summaryModalTemplate!: TemplateRef<any>;  
-  @ViewChild('imageModalTemplate') imageModalTemplate!: TemplateRef<any>;
   summary: string | null = null;
-  ocrText: string = '';  
+  ocrText = '';  
   ocrImages: string[] = []; 
   @ViewChild('dialogTemplate') dialogTemplate!: TemplateRef<any>;
   @ViewChild('actionDialogTemplate') actionDialogTemplate!: TemplateRef<any>;
@@ -47,15 +45,18 @@ export class ViewfilesComponent implements OnInit {
   extractedImages: any[] = [];
   selectedImage: any;
   formattedSummary!: string[];
-  croppedImage: string | null = null;
+  selectedImageId: number | null = null;
+  @ViewChild('imageModalTemplate') imageModalTemplate!: TemplateRef<any>;
   @ViewChild('ocrModalTemplate') ocrModalTemplate!: TemplateRef<any>;
-  @ViewChild('imageCanvas', { static: true }) imageCanvas!: ElementRef<HTMLCanvasElement>;
+  @ViewChild('imageCanvas', { static: false }) imageCanvas!: ElementRef<HTMLCanvasElement>;
+
   private ctx!: CanvasRenderingContext2D;
   private image = new Image();
   private startX = 0;
   private startY = 0;
   private endX = 0;
   private endY = 0;
+  croppedImage: string | null = null;
   
 
   constructor(
@@ -70,23 +71,26 @@ export class ViewfilesComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadFiles();
+    if (this.imageCanvas && this.imageCanvas.nativeElement) {
+      this.ctx = this.imageCanvas.nativeElement.getContext('2d')!;
+  }
   }
 
   loadFiles(): void {
     this.adminService.getPatientFiles(this.patientId).subscribe(
-        (data: any) => {
-            this.pdfFiles = data.pdf_files || [];
-            this.txtFiles = data.txt_files || []; 
-            this.jpgFiles = data.jpg_files || [];
-            this.pngFiles = data.png_files || [];
-        },
-        (error) => {
-            console.error('Error loading files:', error);
-            this.toastr.error('Error loading files');
-        }
+      (data: any) => {
+        this.pdfFiles = data.pdf_files || [];
+        this.txtFiles = data.txt_files || []; 
+        this.jpgFiles = data.jpg_files || [];
+        this.pngFiles = data.png_files || [];
+        this.extractedImages = data.extracted_images || [];
+      },
+      (error) => {
+        console.error('Error loading files:', error);
+        this.toastr.error('Error loading files');
+      }
     );
-}
-
+  }
 
   viewPdf(file: any): void {
     this.selectedFile = file;
@@ -145,7 +149,6 @@ export class ViewfilesComponent implements OnInit {
       this.isLoading = false; // Masquer le spinner après l'ouverture du modal
     });
   }
-  
 
   closeModal(): void {
     this.dialog.closeAll();
@@ -190,8 +193,6 @@ export class ViewfilesComponent implements OnInit {
     }
     this.closeModal();
   }
-  
-  
 
   addNewPage(pdfId: number, newPageFile: File): void {
     this.adminService.addNewPage(pdfId, newPageFile).subscribe(
@@ -267,7 +268,7 @@ export class ViewfilesComponent implements OnInit {
       }
     );
   }
-  
+
   updatePageOrder(pdfId: number, pageOrder: number[]): void {
     this.isLoading = true; // Démarrer le spinner
     this.adminService.updatePageOrder(pdfId, pageOrder).subscribe(
@@ -283,43 +284,32 @@ export class ViewfilesComponent implements OnInit {
       }
     );
   }
-  
+
   drop(event: CdkDragDrop<string[]>): void {
     moveItemInArray(this.pdfPages, event.previousIndex, event.currentIndex);
     this.updatePageOrder(this.selectedPdfId!, this.pdfPages.map(page => page.pageNumber));
   }
 
-  viewImage(fileName: string): void {
-    // Ensure the fileName does not contain unnecessary prefixes
-    if (fileName.startsWith('/media/pdfs/')) {
-        fileName = fileName.replace('/media/pdfs/', '');
-    } else if (fileName.startsWith('http://localhost:8000/media/pdfs/')) {
-        fileName = fileName.replace('http://localhost:8000/media/pdfs/', '');
-    }
-
-    // Call the getImage method with the correctly formatted file name
-    this.adminService.getImage(`media/pdfs/${fileName}`).subscribe(response => {
-        const objectURL = URL.createObjectURL(response);
-        this.selectedImageUrl = this.sanitizer.bypassSecurityTrustUrl(objectURL);
-        // Open the image modal after setting the URL
-        this.dialog.open(this.imageModalTemplate, {
-            width: '80vw',
-            height: '80vh',
-            maxWidth: '80vw',
-            maxHeight: '80vh',
-            panelClass: 'full-screen-modal'
-        });
-    }, error => {
-        console.error('Error fetching image:', error);
-        this.toastr.error('Error fetching image');
-    });
-}
-
-
-
-
-
+  viewImage1(fileName: string): void {
+    const imageUrl = `http://localhost:8000${fileName}`; // Utilisez directement l'URL reçue du backend
   
+    this.adminService.getImage(imageUrl).subscribe(response => {
+      const objectURL = URL.createObjectURL(response);
+      this.selectedImageUrl = this.sanitizer.bypassSecurityTrustUrl(objectURL);
+      this.dialog.open(this.imageModalTemplate, {
+        width: '50vw',
+        height: '500vh',
+        maxWidth: '80vw',
+        maxHeight: '80vh',
+        panelClass: 'full-screen-modal'
+      });
+    }, error => {
+      console.error('Error fetching image:', error);
+      this.toastr.error('Error fetching image');
+    });
+  }
+  
+
   openImageModal(): void {
     this.dialog.open(this.imageModalTemplate, {
       width: '100vw',
@@ -329,8 +319,6 @@ export class ViewfilesComponent implements OnInit {
       panelClass: 'full-screen-modal'
     });
   }
-  
-  
 
   closeImageViewer(): void {
     this.selectedImageUrl = null;
@@ -339,7 +327,7 @@ export class ViewfilesComponent implements OnInit {
   resumerDocument(rapportId: number): void {
     const command = 'résumé ce rapport';
     this.isLoading = true;
-  
+
     this.adminService.resumer(command, rapportId).subscribe(
       (response) => {
         this.summary = response.summary; 
@@ -359,121 +347,185 @@ export class ViewfilesComponent implements OnInit {
     );
   }
 
-  // Format the summary into paragraphs
   formatSummary(summary: string): string[] {
     return summary.split('.').map(paragraph => paragraph.trim()).filter(paragraph => paragraph.length > 0);
   }
 
- 
-
-
-  // Méthode pour ouvrir un modal et afficher le résumé
   openSummaryModal(): void {
     if (!this.summaryModalTemplate) {
       console.error('summaryModalTemplate is not defined');
       return;
     }
-  
+
     this.dialog.open(this.summaryModalTemplate, {
       width: '500px',
       data: { summary: this.summary }
     });
   }
 
- performOCR(pdfId: number): void {
-  this.adminService.performOCR(pdfId).subscribe(
-    (response: any) => {
-      console.log(response);  // Log the response to ensure it's correct
-      this.extractedImages = response;
-      this.dialog.open(this.ocrModalTemplate, {
-        width: '80vw',
-        height: '80vh',
-        panelClass: 'full-screen-modal'
-      });
-    },
-    error => {
-      this.toastr.error('Error performing OCR');
-      console.error('OCR Error:', error);
-    }
-  );
-}
+  // Méthode pour lancer l'OCR et afficher les images extraites
+  performOCR(pdfId: number): void {
+    this.adminService.performOCR(pdfId).subscribe(
+      (response: any[]) => {
+        if (response && response.length > 0) {
+          this.extractedImages = response.map(img => ({
+            ...img,
+            image: this.adminService.getImageUrl(img.image)
+          }));
 
-
-  ngAfterViewInit() {
-    this.ctx = this.imageCanvas.nativeElement.getContext('2d')!;
+          this.dialog.open(this.ocrModalTemplate, {
+            width: '80vw',
+            height: '80vh',
+            panelClass: 'full-screen-modal'
+          });
+        } else {
+          this.toastr.error('No images extracted from OCR');
+        }
+      },
+      error => {
+        this.toastr.error('Error performing OCR');
+        console.error('OCR Error:', error);
+      }
+    );
   }
-
+  
   selectImageForCropping(image: any): void {
-    this.selectedImage = image;
-    this.image.src = image.image;  // Assuming image.image is the URL of the image
-    this.image.onload = () => {
-      this.imageCanvas.nativeElement.width = this.image.width;
-      this.imageCanvas.nativeElement.height = this.image.height;
-      this.ctx.drawImage(this.image, 0, 0);
-      this.initCrop();
-    };
-    this.dialog.open(this.imageModalTemplate, {
-      width: '80vw',
-      height: '80vh',
-      panelClass: 'full-screen-modal'
+    this.selectedImageId = image.id; // Ensure this is set
+    this.selectedImage = image; // Set the image object for cropping
+    console.log('Selected Image ID:', this.selectedImageId); // Log to ensure it's correctly set
+    this.viewImage(image.image);  // Load the image for cropping
+  }
+  
+
+  
+  
+  
+  viewImage(imageUrl: string): void {
+    this.adminService.getImage(imageUrl).subscribe(response => {
+      const objectURL = URL.createObjectURL(response);
+      this.image.src = objectURL;
+  
+      // Assurez-vous que l'image est correctement dessinée
+      this.image.onload = () => {
+        if (this.imageCanvas && this.imageCanvas.nativeElement) {
+          this.ctx = this.imageCanvas.nativeElement.getContext('2d')!;
+          this.ctx.clearRect(0, 0, this.imageCanvas.nativeElement.width, this.imageCanvas.nativeElement.height);
+          this.ctx.drawImage(this.image, 0, 0, this.imageCanvas.nativeElement.width, this.imageCanvas.nativeElement.height);
+        }
+      };
+    }, error => {
+      this.toastr.error('Erreur lors de la récupération de l\'image');
+      console.error('Erreur lors de la récupération de l\'image:', error);
     });
   }
+  
 
-  initCrop(): void {
-    this.imageCanvas.nativeElement.onmousedown = (e) => {
-      this.startX = e.offsetX;
-      this.startY = e.offsetY;
-    };
+  onMouseDown(event: MouseEvent): void {
+    const rect = this.imageCanvas.nativeElement.getBoundingClientRect();
+    this.startX = event.clientX - rect.left;
+    this.startY = event.clientY - rect.top;
+  }
 
-    this.imageCanvas.nativeElement.onmousemove = (e) => {
-      if (e.buttons !== 1) return;
-      this.ctx.clearRect(0, 0, this.imageCanvas.nativeElement.width, this.imageCanvas.nativeElement.height);
-      this.ctx.drawImage(this.image, 0, 0);
-      this.ctx.strokeStyle = 'red';
-      this.ctx.lineWidth = 2;
-      this.endX = e.offsetX;
-      this.endY = e.offsetY;
-      this.ctx.strokeRect(this.startX, this.startY, this.endX - this.startX, this.endY - this.startY);
-    };
+  onMouseMove(event: MouseEvent): void {
+    if (event.buttons !== 1) return;
+
+    this.endX = event.clientX - this.imageCanvas.nativeElement.getBoundingClientRect().left;
+    this.endY = event.clientY - this.imageCanvas.nativeElement.getBoundingClientRect().top;
+
+    this.ctx.clearRect(0, 0, this.imageCanvas.nativeElement.width, this.imageCanvas.nativeElement.height);
+    this.ctx.drawImage(this.image, 0, 0, this.imageCanvas.nativeElement.width, this.imageCanvas.nativeElement.height);
+    this.ctx.strokeStyle = 'red';
+    this.ctx.lineWidth = 2;
+    this.ctx.strokeRect(this.startX, this.startY, this.endX - this.startX, this.endY - this.startY);
   }
 
   cropImage(): void {
-    const width = this.endX - this.startX;
-    const height = this.endY - this.startY;
-    const croppedImageCanvas = document.createElement('canvas');
-    croppedImageCanvas.width = width;
-    croppedImageCanvas.height = height;
-    const croppedCtx = croppedImageCanvas.getContext('2d')!;
-    croppedCtx.drawImage(this.image, this.startX, this.startY, width, height, 0, 0, width, height);
-    this.croppedImage = croppedImageCanvas.toDataURL('image/png');
-  }
-
-  saveCroppedImage(): void {
-    if (this.selectedImage && this.croppedImage) {
-      const cropCoordinates = {
-        x: this.startX,
-        y: this.startY,
-        width: this.endX - this.startX,
-        height: this.endY - this.startY
-      };
-
-      this.adminService.cropImage(this.selectedImage.id, cropCoordinates).subscribe(
-        () => {
-          this.toastr.success('Image cropped and saved successfully');
-          this.dialog.closeAll();
-        },
-        error => {
-          this.toastr.error('Error saving cropped image');
-          console.error('Crop Image Error:', error);
-        }
-      );
+    if (this.image && this.imageCanvas && this.imageCanvas.nativeElement) {
+      const canvasWidth = this.imageCanvas.nativeElement.width;
+      const canvasHeight = this.imageCanvas.nativeElement.height;
+  
+      const originalImageWidth = this.image.naturalWidth;
+      const originalImageHeight = this.image.naturalHeight;
+  
+      const scaleX = originalImageWidth / canvasWidth;
+      const scaleY = originalImageHeight / canvasHeight;
+  
+      const width = Math.abs(this.endX - this.startX) * scaleX;
+      const height = Math.abs(this.endY - this.startY) * scaleY;
+      const cropStartX = Math.min(this.startX, this.endX) * scaleX;
+      const cropStartY = Math.min(this.startY, this.endY) * scaleY;
+  
+      if (width > 0 && height > 0) {
+        const cropCoordinates = {
+          x: cropStartX,
+          y: cropStartY,
+          width: width,
+          height: height
+        };
+  
+        const croppedCanvas = document.createElement('canvas');
+        croppedCanvas.width = width;
+        croppedCanvas.height = height;
+  
+        const croppedCtx = croppedCanvas.getContext('2d');
+        croppedCtx?.drawImage(
+          this.image,
+          cropStartX, cropStartY, width, height,
+          0, 0, width, height
+        );
+  
+        const croppedImageDataUrl = croppedCanvas.toDataURL('image/png'); // Convert cropped portion to base64 image
+  
+        this.saveCroppedImage(cropCoordinates, croppedImageDataUrl); // Pass coordinates and the cropped image
+      } else {
+        this.toastr.error('Invalid cropping area. Please try again.');
+      }
     }
   }
+  
+  saveCroppedImage(cropCoordinates: any, croppedImage: string): void {
+    if (this.selectedImageId && croppedImage) {
+      this.adminService.cropImage(this.selectedImageId, cropCoordinates, croppedImage).subscribe(
+        (response) => {
+          this.toastr.success('Cropped image saved successfully');
+          
+          // Vérifiez si le backend renvoie bien le type et le fichier
+          if (response && response.file && response.fileType) {
+            const file = {
+              titre: response.titre || 'Cropped Image',  // Nom du fichier
+              categorie: response.categorie || 'N/A',    // Catégorie
+              etat: response.etat || 'Modified',         // État du fichier
+              date_modification: new Date(),             // Date de modification
+              file: response.file                        // URL du fichier
+            };
+  
+            // Ajouter dans le tableau JPG ou PNG en fonction du type de fichier
+            if (response.fileType === 'jpg') {
+              this.jpgFiles.push(file);
+            } else if (response.fileType === 'png') {
+              this.pngFiles.push(file);
+            } else {
+              this.toastr.error('Unknown file type returned from server.');
+            }
+          } else {
+            this.toastr.error('Invalid response from server.');
+          }
+  
+          this.closeImageModal();
+        },
+        (error) => {
+          this.toastr.error('Error saving cropped image');
+          console.error('Error:', error);
+        }
+      );
+    } else {
+      this.toastr.error('No image selected or cropping data is missing.');
+    }
+  }
+  
 
   closeImageModal(): void {
     this.dialog.closeAll();
   }
   
 }
-  
-  
