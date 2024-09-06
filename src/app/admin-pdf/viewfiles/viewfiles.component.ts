@@ -485,43 +485,46 @@ export class ViewfilesComponent implements OnInit {
   
   saveCroppedImage(cropCoordinates: any, croppedImage: string): void {
     if (this.selectedImageId && croppedImage) {
-      this.adminService.cropImage(this.selectedImageId, cropCoordinates, croppedImage).subscribe(
-        (response) => {
-          this.toastr.success('Cropped image saved successfully');
-          
-          // Vérifiez si le backend renvoie bien le type et le fichier
-          if (response && response.file && response.fileType) {
-            const file = {
-              titre: response.titre || 'Cropped Image',  // Nom du fichier
-              categorie: response.categorie || 'N/A',    // Catégorie
-              etat: response.etat || 'Modified',         // État du fichier
-              date_modification: new Date(),             // Date de modification
-              file: response.file                        // URL du fichier
-            };
-  
-            // Ajouter dans le tableau JPG ou PNG en fonction du type de fichier
-            if (response.fileType === 'jpg') {
-              this.jpgFiles.push(file);
-            } else if (response.fileType === 'png') {
-              this.pngFiles.push(file);
-            } else {
-              this.toastr.error('Unknown file type returned from server.');
-            }
-          } else {
-            this.toastr.error('Invalid response from server.');
-          }
-  
-          this.closeImageModal();
-        },
-        (error) => {
-          this.toastr.error('Error saving cropped image');
-          console.error('Error:', error);
-        }
-      );
+      // Convertir l'image croppée en base64 en fichier
+      const base64Data = croppedImage.split(',')[1];
+      const byteCharacters = atob(base64Data);
+      const byteNumbers = new Array(byteCharacters.length);
+      for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
+      }
+      const byteArray = new Uint8Array(byteNumbers);
+      const blob = new Blob([byteArray], { type: 'image/png' });
+
+      // Create a link element, hide it, direct it towards the blob, and trigger a click
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'cropped_image.png';  // The name for the downloaded image
+      document.body.appendChild(a);  // Append it to the body
+      a.click();  // Trigger the download
+      document.body.removeChild(a);  // Remove it after downloading
+
+      this.toastr.success('Image croppée téléchargée avec succès.');
     } else {
       this.toastr.error('No image selected or cropping data is missing.');
     }
-  }
+}
+
+  
+  // Méthode pour déclencher le téléchargement de l'image croppée
+  downloadCroppedImage(fileUrl: string): void {
+    const a = document.createElement('a');  // Create a hidden <a> element
+    a.href = fileUrl;  // Set the URL to the file
+    a.download = fileUrl.split('/').pop() || 'cropped_image.png';  // Set the file name
+    a.click();  // Programmatically trigger the download
+}
+
+  
+
+  
+
+  
+
+  
   
 
   closeImageModal(): void {

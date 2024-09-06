@@ -118,13 +118,14 @@ getImageUrl(imageFileName: string): string {
   // Si l'URL commence déjà par 'http', ne la modifiez pas
   return imageFileName.startsWith('http')
     ? imageFileName
-    : `http://localhost:8000/pdf/media/extracted_images/${imageFileName}`;
+    : `http://localhost:8000/pdf/media/extracted_images/cropped_extracted_images/${imageFileName}`;
 }
 
-
-
-
-
+uploadImage(file: File): Observable<any> {
+  const formData = new FormData();
+  formData.append('file', file);
+  return this.http.post(`${this.baseUrl}/upload-image/`, formData);
+}
 
   getPdfUrl1(filename: string): string {
     if (filename.startsWith('/media/pdfs/')) {
