@@ -648,15 +648,40 @@ h2 {
   color: #d32f2f;
 }
 
+.modal-footer {
+  display: flex;
+  justify-content: center; /* Centre les boutons */
+  gap: 20px; /* Espace entre les boutons */
+}
+
 .confirm-button {
   color: white;
-  background-color: #73afe4; /* Vert pour "Confirm" */
+  background-color: #6c0cba79; /* Bleu-vert pour "Confirm" */
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.confirm-button:hover {
+  background-color: #6c0cba79; /* Légèrement plus foncé au survol */
 }
 
 .cancel-button {
   color: white;
-  background-color: #e87537; /* Rouge pour "Cancel" */
+  background-color: #e8dc37d3; /* Rouge pour "Cancel" */
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
+
+.cancel-button:hover {
+  background-color: #e8dc37d3; /* Légèrement plus foncé au survol */
+}
+
 
 label {
   display: block;
@@ -672,15 +697,7 @@ select {
   border-radius: 4px;
 }
 
-.confirm-button {
-  color: white;
-  background-color: #73afe4; /* Vert pour "Confirm" */
-}
 
-.cancel-button {
-  color: white;
-  background-color: #e87537; /* Rouge pour "Cancel" */
-}
 
 .mat-dialog-title mat-icon {
   margin-right: 8px;
@@ -831,6 +848,13 @@ select {
   padding: 10px;
   background-color: #f1f1f1;
   border-bottom: 1px solid #ccc;
+}
+.file-input {
+  display: block;
+  margin: 15px 0;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
 }
 
 .page-preview-container {
@@ -1158,7 +1182,8 @@ select {
 .modal-content {
   display: flex;
   flex-direction: column;
-  height: 100%;
+  height: 80%;
+  width: 500px;
 }
 
 .modal-body {

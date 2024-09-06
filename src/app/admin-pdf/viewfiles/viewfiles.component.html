@@ -107,46 +107,51 @@
       </div>
   
       <!-- Modal for PDF Viewer -->
-      <ng-template #dialogTemplate>
-        <div class="pdf-viewer-container full-screen">
-          <div class="modal-header">
-            <button class="close-button" (click)="closeModal1()">
-              <i class="fas fa-times"></i>
-            </button>
-            <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Actions menu">
-              <i class="fas fa-cogs"></i>
-            </button>
-            <mat-menu #menu="matMenu">
-              <button mat-menu-item (click)="openModal('addPage', selectedFile)">
-                <mat-icon>note_add</mat-icon>
-                <span>Add Page</span>
-              </button>
-              <button mat-menu-item (click)="openModal('movePage', selectedFile)">
-                <mat-icon>swap_vert</mat-icon>
-                <span>Move Page</span>
-              </button>
-              <button mat-menu-item (click)="openModal('extractPages', selectedFile)">
-                <mat-icon>content_cut</mat-icon>
-                <span>Extract Pages</span>
-              </button>
-              <button mat-menu-item (click)="openModal('rotatePages', selectedFile)">
-                <mat-icon>rotate_right</mat-icon>
-                <span>Rotate Pages</span>
-              </button>
-              <button mat-menu-item (click)="resumerDocument(selectedFile.id)">
-                <mat-icon>summarize</mat-icon>
-                <span>Résumé</span>
-              </button>
-              <button mat-menu-item (click)="performOCR(selectedFile.id)">
-                <mat-icon>text_snippet</mat-icon>
-                <span>OCR</span>
-              </button>
-              <button mat-menu-item (click)="deletePdf(selectedFile.id)">
-                <mat-icon>delete</mat-icon>
-                <span>Delete</span>
-              </button>
-            </mat-menu>
-          </div>
+<ng-template #dialogTemplate>
+  <div class="pdf-viewer-container full-screen">
+    <div class="modal-header">
+      <!-- Icône de fermeture avec couleur rouge -->
+      <button class="close-button" (click)="closeModal1()">
+        <i class="fas fa-times" style="color: #e74c3c; font-size: 24px;"></i> <!-- Rouge -->
+      </button>
+
+      
+      <!-- Icône de paramètre avec couleur bleu -->
+      <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Actions menu">
+        <i class="fas fa-cogs" style="color: #3498db; font-size: 24px;"></i> <!-- Bleu -->
+      </button>
+      
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item (click)="openModal('addPage', selectedFile)">
+          <mat-icon color="primary">note_add</mat-icon> <!-- Couleur bleue -->
+          <span>Add Page</span>
+        </button>
+        <button mat-menu-item (click)="openModal('movePage', selectedFile)">
+          <mat-icon color="accent">swap_vert</mat-icon> <!-- Couleur accentuée -->
+          <span>Move Page</span>
+        </button>
+        <button mat-menu-item (click)="openModal('extractPages', selectedFile)">
+          <mat-icon style="color: #f39c12;">content_cut</mat-icon> <!-- Jaune -->
+          <span>Extract Pages</span>
+        </button>
+        <button mat-menu-item (click)="openModal('rotatePages', selectedFile)">
+          <mat-icon style="color: #9b59b6;">rotate_right</mat-icon> <!-- Violet -->
+          <span>Rotate Pages</span>
+        </button>
+        <button mat-menu-item (click)="resumerDocument(selectedFile.id)">
+          <mat-icon style="color: #1abc9c;">summarize</mat-icon> <!-- Vert -->
+          <span>Résumé</span>
+        </button>
+        <button mat-menu-item (click)="performOCR(selectedFile.id)">
+          <mat-icon style="color: #e67e22;">text_snippet</mat-icon> <!-- Orange -->
+          <span>OCR</span>
+        </button>
+        <button mat-menu-item (click)="deletePdf(selectedFile.id)">
+          <mat-icon color="warn">delete</mat-icon> <!-- Rouge pour supprimer -->
+          <span>Delete</span>
+        </button>
+      </mat-menu>
+    </div>
           <ngx-extended-pdf-viewer
             *ngIf="selectedPdfUrl"
             [src]="selectedPdfUrl"
@@ -155,9 +160,12 @@
             [showZoomButtons]="true"
             [showFindButton]="true"
             [showPresentationModeButton]="true"
+            [showFindButton]="true" 
+            [textLayer]="true"
+            [showPropertiesButton]="true" 
             [showDownloadButton]="true"
             [showPrintButton]="true"
-            [zoom]="40.0">
+            [zoom]="50.0">
           </ngx-extended-pdf-viewer>
         </div>
       </ng-template>
@@ -166,6 +174,35 @@
       <div *ngIf="isLoading" class="spinner-container">
         <div class="spinner"></div>
       </div>
+      <!-- Modal for adding new pages -->
+
+      <ng-template #addPageDialogTemplate>
+        <div class="modal-backdrop">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h2>{{ modalAction | titlecase }} Page</h2>
+              <button class="close-button" (click)="closeModal()">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+      
+            <!-- Section pour ajouter une nouvelle page -->
+            <div class="modal-body" *ngIf="modalAction === 'addPage'">
+              <label for="newPageFile">Sélectionner un fichier à partir de votre PC :</label>
+              <input type="file" id="newPageFile" (change)="onFileSelected($event)" class="file-input" accept=".pdf,.docx,.jpg,.png" />
+            </div>
+      
+            <div class="modal-footer">
+              <button mat-button class="confirm-button" (click)="confirmAction()">
+                <mat-icon>check</mat-icon> Confirmer
+              </button>
+              <button mat-button class="cancel-button" (click)="closeModal()">
+                <mat-icon>cancel</mat-icon> Annuler
+              </button>
+            </div>
+          </div>
+        </div>
+      </ng-template>
       
       <!-- Action Modal Template -->
       <ng-template #actionDialogTemplate>
@@ -189,6 +226,37 @@
                 </div>
               </div>
             </div>
+
+            <!-- Modal for adding new pages -->
+<ng-template #actionDialogTemplate>
+  <div class="modal-backdrop">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>{{ modalAction | titlecase }} Page</h2>
+        <button class="close-button" (click)="closeModal()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <!-- Section for adding new page -->
+      <div class="modal-body" *ngIf="modalAction === 'addPage'">
+        <label for="newPageFile">Select a file to add:</label>
+        <input type="file" id="newPageFile" (change)="onFileSelected($event)" class="file-input" />
+      </div>
+
+      <div class="modal-footer">
+        <button mat-button class="confirm-button" (click)="confirmAction()">
+          <mat-icon>check</mat-icon> Confirm
+        </button>
+        <button mat-button class="cancel-button" (click)="closeModal()">
+          <mat-icon>cancel</mat-icon> Cancel
+        </button>
+      </div>
+      
+    </div>
+  </div>
+</ng-template>
+
       
             <!-- Section for extracting pages -->
             <div class="modal-body" *ngIf="modalAction === 'extractPages'">
@@ -305,7 +373,7 @@
       <div class="col col-3" data-label="Status">{{ file.etat }}</div>
       <div class="col col-4" data-label="Modified Version">{{ file.date_modification }}</div>
       <div class="col col-5" data-label="Actions">
-        <button class="icon-button" (click)="viewImage(file.file)">
+        <button class="icon-button" (click)="viewImage12(file.file)">
           <i class="fas fa-eye"></i> View
         </button>
         <button class="icon-button" (click)="deletePdf(file.id)">
@@ -335,7 +403,7 @@
       <div class="col col-3" data-label="Status">{{ file.etat }}</div>
       <div class="col col-4" data-label="Modified Version">{{ file.date_modification }}</div>
       <div class="col col-5" data-label="Actions">
-        <button class="icon-button" (click)="viewImage(file.file)">
+        <button class="icon-button" (click)="viewImage12(file.file)">
           <i class="fas fa-eye"></i> View
         </button>
         <button class="icon-button" (click)="deletePdf(file.id)">

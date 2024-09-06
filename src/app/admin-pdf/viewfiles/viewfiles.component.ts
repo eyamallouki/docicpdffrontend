@@ -517,17 +517,37 @@ export class ViewfilesComponent implements OnInit {
     a.download = fileUrl.split('/').pop() || 'cropped_image.png';  // Set the file name
     a.click();  // Programmatically trigger the download
 }
+ 
+viewImage12(fileName: string): void {
+  // Ensure fileName does not have the full URL already
+  if (fileName.startsWith('http://localhost:8000/media/pdfs/')) {
+    // Use the correct base URL for the image
+    fileName = fileName.replace('http://localhost:8000/media/pdfs/', '');
+  }
 
-  
+  // Construct the correct URL with the proper base path
+  const fullUrl = `http://localhost:8000/pdf/media/pdfs/${fileName}`;
 
-  
+  // Fetch the image from the corrected URL
+  this.adminService.getImage11(fullUrl).subscribe(response => {
+    const objectURL = URL.createObjectURL(response);  // Convert Blob to object URL
+    this.selectedImageUrl = this.sanitizer.bypassSecurityTrustUrl(objectURL);  // Sanitize the URL for display
+  }, error => {
+    console.error('Error fetching image:', error);  // Log any errors
+    this.toastr.error('Error fetching image');  // Display an error notification
+  });
+}
+// Méthode pour capturer la sélection du fichier
+onFileSelected(event: Event): void {
+  const input = event.target as HTMLInputElement;
+  if (input.files && input.files.length > 0) {
+    const selectedFile = input.files[0]; // Capture the selected file
+    this.selectedFile = selectedFile; // Store it to use in confirmAction()
+  }
+}
 
-  
 
-  
-  
-
-  closeImageModal(): void {
+closeImageModal(): void {
     this.dialog.closeAll();
   }
   

@@ -136,6 +136,17 @@ uploadImage(file: File): Observable<any> {
     return `http://localhost:8000/media/pdfs/${filename}`;
 }
 
+getImage11(fileName: string): Observable<Blob> {
+  // Ensure the fileName is correctly prefixed without duplication
+  if (!fileName.startsWith('http://localhost:8000/pdf/media/pdfs/')) {
+    fileName = `http://localhost:8000/pdf/media/pdfs/${fileName}`;
+  }
+
+  return this.http.get(fileName, { responseType: 'blob' });
+}
+
+
+
 saveCroppedImage(imageId: number, cropCoordinates: any): Observable<any> {
   const headers = this.getAuthHeaders();
   const croppedImageData = {
