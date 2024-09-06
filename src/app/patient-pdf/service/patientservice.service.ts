@@ -10,6 +10,8 @@ import { SafeResourceUrl } from '@angular/platform-browser';
 })
 export class PatientserviceService {
   private baseUrl = 'http://localhost:8000/pdf';
+  private apiUrl = 'http://localhost:8000/auth';
+
   sanitizer: any;
   
   
@@ -35,6 +37,19 @@ export class PatientserviceService {
     return this.http.get(`${this.baseUrl}/media/pdfs/${fileName}`, { responseType: 'blob' });
   }
   
+  getUserProfile(token: string): Observable<any> {
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`  // Assurez-vous que le token est bien transmis ici
+    });
+    return this.http.get(`${this.apiUrl}/profile/`, { headers });
+  }
+  
+  
+
+  updateUserProfile(userData: any, token: string): Observable<any> {
+    const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` });
+    return this.http.put(`${this.apiUrl}/user-update/`, userData, { headers });
+  }
 
   getPdfUrl(filename: string): string {
    

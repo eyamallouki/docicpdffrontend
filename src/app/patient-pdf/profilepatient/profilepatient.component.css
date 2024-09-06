@@ -148,3 +148,45 @@ select:focus{
         line-height: 18px;
     }
 }
+.button-container {
+    display: flex;
+    gap: 10px; /* Espacement entre les boutons */
+}
+
+.save-btn {
+    background-color: #0651c8; /* Vert */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    font-size: 16px;
+}
+
+.save-btn i {
+    margin-right: 8px; /* Espacement entre l'icône et le texte */
+}
+
+.save-btn:hover {
+    background-color: #0651c8; /* Couleur plus foncée au survol */
+}
+
+.cancel-btn {
+    background-color: #dc3545; /* Rouge */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    font-size: 16px;
+}
+
+.cancel-btn i {
+    margin-right: 8px; /* Espacement entre l'icône et le texte */
+}
+
+.cancel-btn:hover {
+    background-color: #750510; /* Couleur plus foncée au survol */
+}

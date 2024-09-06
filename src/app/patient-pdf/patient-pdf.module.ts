@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { PatientPdfComponentComponent } from './patient-pdf-component/patient-pdf-component.component';
 import { UploadfilepatientComponent } from './patient-pdf/uploadfilepatient/uploadfilepatient.component';
 import { ProfilepatientComponent } from './profilepatient/profilepatient.component';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ToastrModule } from 'ngx-toastr';
@@ -41,6 +41,7 @@ import { NgxDocViewerModule } from 'ngx-doc-viewer';
     MatFormFieldModule,
     NgxDocViewerModule,
     MatDialogModule,
+    ReactiveFormsModule,
     AppRoutingModule,
     MatIconModule,
     BrowserAnimationsModule, 
