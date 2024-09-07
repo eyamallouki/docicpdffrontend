@@ -57,6 +57,7 @@ export class ViewfilesComponent implements OnInit {
   private endX = 0;
   private endY = 0;
   croppedImage: string | null = null;
+  rotationAngle: number = 0
   
 
   constructor(
@@ -549,6 +550,58 @@ onFileSelected(event: Event): void {
 
 closeImageModal(): void {
     this.dialog.closeAll();
+  } 
+
+  // Start dragging: Save the starting position or element reference
+onDragStart(event: DragEvent): void {
+  if (event.target instanceof HTMLElement) {
+    event.dataTransfer?.setData('text/plain', event.target.id); // Attach the dragged element's ID
+    console.log('Drag started on element with ID:', event.target.id);
   }
+}
+
+// End dragging: Handle dropping or snapping to position
+onDragEnd(event: DragEvent): void {
+  if (event.target instanceof HTMLElement) {
+    const dropTarget = document.elementFromPoint(event.clientX, event.clientY); // Get the drop location
+    if (dropTarget) {
+      console.log('Dropped on target:', dropTarget.id);
+      // Implement logic to snap element to new position or reorder
+    }
+  }
+  console.log('Drag operation finished.');
+}
+// Set rotation angle and apply transformation to the canvas or element
+setRotationAngle(angle: number): void {
+  this.rotationAngle = angle;
+
+  if (this.imageCanvas && this.imageCanvas.nativeElement && this.image) {
+    const canvas = this.imageCanvas.nativeElement;
+    const context = canvas.getContext('2d');
+
+    if (context) {
+      context.clearRect(0, 0, canvas.width, canvas.height); // Clear the canvas
+      context.save(); // Save the current state before rotation
+
+      // Move canvas origin to center and rotate the canvas
+      context.translate(canvas.width / 2, canvas.height / 2);
+      context.rotate((this.rotationAngle * Math.PI) / 180); // Convert degrees to radians
+
+      // Draw the image centered after rotation
+      context.drawImage(
+        this.image,
+        -this.image.width / 2,
+        -this.image.height / 2,
+        this.image.width,
+        this.image.height
+      );
+
+      context.restore(); // Restore the canvas state
+    }
+  } else {
+    console.log('Canvas or image not initialized for rotation');
+  }
+}
+
   
 }

@@ -616,7 +616,7 @@ h2 {
   border: 1px solid #888;
   border-radius: 8px;
   padding: 20px;
-  width: 300px;
+  width: 500px;
   max-width: 100%;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
@@ -1183,7 +1183,7 @@ select {
   display: flex;
   flex-direction: column;
   height: 80%;
-  width: 500px;
+  width: 600px;
 }
 
 .modal-body {
@@ -1245,4 +1245,46 @@ canvas {
   display: flex;
   justify-content: center;
   align-items: center;
+} 
+
+/* Center the title and the rotating icon */
+.centered-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  position: relative;
 }
+
+/* Rotating Icon with 3D animation */
+.rotating-icon {
+  font-size: 24px;
+  animation: rotate3d 2s infinite linear;
+}
+
+/* Keyframes for the 3D rotating effect */
+@keyframes rotate3d {
+  0% {
+    transform: rotateX(0deg) rotateY(0deg);
+  }
+  25% {
+    transform: rotateX(90deg) rotateY(0deg);
+  }
+  50% {
+    transform: rotateX(90deg) rotateY(90deg);
+  }
+  75% {
+    transform: rotateX(90deg) rotateY(180deg);
+  }
+  100% {
+    transform: rotateX(90deg) rotateY(360deg);
+  }
+}
+
+/* Style adjustments for the close button */
+.close-button {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+}
+
